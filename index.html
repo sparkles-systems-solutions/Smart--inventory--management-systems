@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="si">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AS4 TAXI - Professional Hire Meter</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <style>
+        :root { --primary: #001f3f; --secondary: #27ae60; --accent: #c0392b; --gray: #95a5a6; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; margin: 0; padding: 15px; display: flex; justify-content: center; }
+        .card { background: white; padding: 20px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
+        
+        .logo-header { background: #000; padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 20px; }
+        .logo-img { width: 100px; height: auto; border-radius: 10px; }
+        .header-title { color: white; font-size: 24px; font-weight: bold; margin-top: 10px; display: block; }
+
+        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 15px; }
+        
+        button { width: 100%; padding: 15px; margin: 8px 0; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; color: white; transition: 0.3s; }
+        .btn-start { background: var(--secondary); }
+        .btn-end { background: var(--accent); }
+        .btn-report { background: #34495e; }
+
+        #live-timer { font-size: 18px; font-weight: bold; color: var(--accent); margin: 10px 0; text-align: center; display: none; }
+
+        #receipt-area { display: none; margin-top: 20px; padding: 20px; border: 2px solid var(--primary); border-radius: 15px; background: #fff; }
+        .r-header { text-align: center; background: #000; padding: 10px; border-radius: 10px; margin-bottom: 15px; }
+        .r-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #eee; padding: 8px 0; font-size: 14px; }
+        .r-total { background: var(--primary); color: white; padding: 15px; text-align: center; border-radius: 10px; font-size: 22px; font-weight: bold; margin-top: 15px; }
+
+        /* Advanced Reports Area */
+        #report-display { display: none; margin-top: 15px; padding: 15px; background: #fff; border-radius: 15px; border: 1px solid #ddd; }
+        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
+        .stat-item { background: #f9f9f9; padding: 8px; border-radius: 10px; text-align: center; border: 1px solid #eee; font-size: 12px; }
+        .stat-item b { display: block; font-size: 14px; color: var(--primary); }
+        
+        .filter-box { background: #eee; padding: 10px; border-radius: 10px; margin-bottom: 10px; font-size: 12px; }
+        #history-list { margin-top: 10px; max-height: 180px; overflow-y: auto; font-size: 11px; background: #f4f7f6; padding: 8px; border-radius: 10px; }
+        .h-item { border-bottom: 1px solid #ddd; padding: 5px 0; display: flex; justify-content: space-between; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="logo-header">
+        <img class="logo-img" src="https://drive.google.com/uc?export=view&id=1AFrOfq-0jHu02LknTc1yHZijcXTOKZ_R" alt="AS4 Logo">
+        <span class="header-title">AS4 TAXI</span>
+    </div>
+
+    <input type="tel" id="cust-mobile" placeholder="Customer Mobile">
+    <input list="towns" id="start-loc" placeholder="Start Town / Location">
+    <input list="towns" id="end-loc" placeholder="End Town / Location">
+
+    <datalist id="towns">
+        <option value="Colombo"><option value="Kottawa"><option value="Maharagama"><option value="Pannipitiya"><option value="Homagama">
+    </datalist>
+
+    <div id="live-timer">Ride Time: 00:00:00</div>
+
+    <button class="btn-start" id="startBtn" onclick="startRide()">START RIDE</button>
+    <button class="btn-end" onclick="endRide()">END RIDE</button>
+    <button style="background:var(--gray)" onclick="location.reload()">NEW RIDE</button>
+    <button class="btn-report" onclick="toggleReports()">INCOME REPORTS & ANALYSIS</button>
+
+    <div id="report-display">
+        <div class="stat-grid">
+            <div class="stat-item">Today Income<b id="day-income">Rs. 0</b></div>
+            <div class="stat-item">Today KM<b id="day-dist">0 km</b></div>
+            <div class="stat-item">Month Income<b id="month-income">Rs. 0</b></div>
+            <div class="stat-item">Month KM<b id="month-dist">0 km</b></div>
+        </div>
+        
+        <div class="filter-box">
+            <b>Filter History:</b>
+            <select id="filter-type" onchange="filterHistory()" style="padding:5px; margin-top:5px;">
+                <option value="all">All Runs</option>
+                <option value="short">Short Runs (< 5km)</option>
+                <option value="long">Long Runs (> 5km)</option>
+            </select>
+        </div>
+
+        <button class="btn-csv" style="background:#ddd; color:black; font-size:12px; padding:8px;" onclick="downloadCSV()">Download CSV Report</button>
+        <div id="history-list"></div>
+    </div>
+
+    <div id="receipt-area">
+        <div class="r-header"><h3 style="color:white; margin:0;">AS4 TAXI</h3></div>
+        <div class="r-row"><span>Date & Time:</span> <span id="r-datetime"></span></div>
+        <div class="r-row"><span>Route:</span> <span id="r-route"></span></div>
+        <div class="r-row"><span>Distance:</span> <span id="r-dist"></span></div>
+        <div class="r-row"><span>Start Time:</span> <span id="r-stime"></span></div>
+        <div class="r-row"><span>End Time:</span> <span id="r-etime"></span></div>
+        <div class="r-total" id="r-total"></div>
+        <button style="background:#25d366; margin-top:15px;" onclick="shareReceipt()">SHARE TO WHATSAPP</button>
+    </div>
+</div>
+
+<script>
+    let sTime, sLat, sLon, timerInterval;
+
+    function startRide() {
+        navigator.geolocation.getCurrentPosition(p => {
+            sTime = new Date();
+            sLat = p.coords.latitude; sLon = p.coords.longitude;
+            document.getElementById('startBtn').innerText = "RIDE ACTIVE ✅";
+            document.getElementById('startBtn').disabled = true;
+            document.getElementById('live-timer').style.display = "block";
+            timerInterval = setInterval(updateTimer, 1000);
+        });
+    }
+
+    function updateTimer() {
+        let diff = Math.floor((new Date() - sTime) / 1000);
+        let hrs = Math.floor(diff / 3600).toString().padStart(2, '0');
+        let mins = Math.floor((diff % 3600) / 60).toString().padStart(2, '0');
+        let secs = (diff % 60).toString().padStart(2, '0');
+        document.getElementById('live-timer').innerText = `Ride Time: ${hrs}:${mins}:${secs}`;
+    }
+
+    function endRide() {
+        if (!sTime) return alert("Start Ride first!");
+        clearInterval(timerInterval);
+        navigator.geolocation.getCurrentPosition(p => {
+            let eTime = new Date();
+            let dist = calculateDistance(sLat, sLon, p.coords.latitude, p.coords.longitude);
+            let fare = Math.round(100 + (Math.max(0, dist - 1) * 80));
+            
+            let from = document.getElementById('start-loc').value || "Current";
+            let to = document.getElementById('end-loc').value || "Destination";
+
+            // Receipt with Time
+            document.getElementById('r-datetime').innerText = eTime.toLocaleDateString() + " | " + eTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+            document.getElementById('r-route').innerText = from + " ➔ " + to;
+            document.getElementById('r-dist').innerText = dist.toFixed(2) + " km";
+            document.getElementById('r-stime').innerText = sTime.toLocaleTimeString();
+            document.getElementById('r-etime').innerText = eTime.toLocaleTimeString();
+            document.getElementById('r-total').innerText = "Total: Rs. " + fare;
+            document.getElementById('receipt-area').style.display = "block";
+
+            saveData(fare, dist, sTime, eTime, from, to);
+        });
+    }
+
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+        const R = 6371;
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    }
+
+    function saveData(fare, dist, start, end, from, to) {
+        let history = JSON.parse(localStorage.getItem('as4_advanced_v1') || "[]");
+        history.push({
+            date: end.toLocaleDateString(),
+            month: (end.getMonth()+1) + "-" + end.getFullYear(),
+            from: from, to: to,
+            dist: parseFloat(dist.toFixed(2)),
+            fare: fare,
+            time: end.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+        });
+        localStorage.setItem('as4_advanced_v1', JSON.stringify(history));
+    }
+
+    function toggleReports() {
+        let div = document.getElementById('report-display');
+        div.style.display = (div.style.display === 'block') ? 'none' : 'block';
+        filterHistory();
+    }
+
+    function filterHistory() {
+        let history = JSON.parse(localStorage.getItem('as4_advanced_v1') || "[]");
+        let type = document.getElementById('filter-type').value;
+        let today = new Date().toLocaleDateString();
+        let thisMonth = (new Date().getMonth()+1) + "-" + new Date().getFullYear();
+
+        let dInc = 0, dDist = 0, mInc = 0, mDist = 0;
+        let html = "";
+
+        history.slice().reverse().forEach(r => {
+            if (r.date === today) { dInc += r.fare; dDist += r.dist; }
+            if (r.month === thisMonth) { mInc += r.fare; mDist += r.dist; }
+
+            let show = (type === "all") || (type === "short" && r.dist < 5) || (type === "long" && r.dist >= 5);
+            if (show) {
+                html += `<div class="h-item"><span>${r.date} (${r.time})</span><span>${r.dist}km</span><span>Rs.${r.fare}</span></div>`;
+            }
+        });
+
+        document.getElementById('day-income').innerText = "Rs. " + dInc;
+        document.getElementById('day-dist').innerText = dDist.toFixed(2) + " km";
+        document.getElementById('month-income').innerText = "Rs. " + mInc;
+        document.getElementById('month-dist').innerText = mDist.toFixed(2) + " km";
+        document.getElementById('history-list').innerHTML = html || "No records found.";
+    }
+
+    function downloadCSV() {
+        let history = JSON.parse(localStorage.getItem('as4_advanced_v1') || "[]");
+        let csv = "Date,Time,From,To,Distance(km),Fare(Rs)\n" + 
+                  history.map(r => `${r.date},${r.time},${r.from},${r.to},${r.dist},${r.fare}`).join("\n");
+        let blob = new Blob([csv], { type: 'text/csv' });
+        let a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'AS4_Taxi_Full_Report.csv';
+        a.click();
+    }
+
+    async function shareReceipt() {
+        const canvas = await html2canvas(document.getElementById('receipt-area'));
+        canvas.toBlob(blob => {
+            const file = new File([blob], 'AS4_Receipt.png', { type: 'image/png' });
+            if (navigator.share) navigator.share({ files: [file] });
+        });
+    }
+</script>
+</body>
+</html>
