@@ -1,217 +1,585 @@
 <!DOCTYPE html>
-<html lang="si">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AS4 TAXI - Professional Hire Meter</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>SAP B1 PRO | User Management • Batches • GRN • Issue • Full Permissions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
-        :root { --primary: #001f3f; --secondary: #27ae60; --accent: #c0392b; --gray: #95a5a6; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; margin: 0; padding: 15px; display: flex; justify-content: center; }
-        .card { background: white; padding: 20px; border-radius: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); width: 100%; max-width: 400px; }
-        
-        .logo-header { background: #000; padding: 20px; border-radius: 15px; text-align: center; margin-bottom: 20px; }
-        .logo-img { width: 100px; height: auto; border-radius: 10px; }
-        .header-title { color: white; font-size: 24px; font-weight: bold; margin-top: 10px; display: block; }
-
-        input, select { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 15px; }
-        
-        button { width: 100%; padding: 15px; margin: 8px 0; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; color: white; transition: 0.3s; }
-        .btn-start { background: var(--secondary); }
-        .btn-end { background: var(--accent); }
-        .btn-report { background: #34495e; }
-
-        #live-timer { font-size: 18px; font-weight: bold; color: var(--accent); margin: 10px 0; text-align: center; display: none; }
-
-        #receipt-area { display: none; margin-top: 20px; padding: 20px; border: 2px solid var(--primary); border-radius: 15px; background: #fff; }
-        .r-header { text-align: center; background: #000; padding: 10px; border-radius: 10px; margin-bottom: 15px; }
-        .r-row { display: flex; justify-content: space-between; border-bottom: 1px dashed #eee; padding: 8px 0; font-size: 14px; }
-        .r-total { background: var(--primary); color: white; padding: 15px; text-align: center; border-radius: 10px; font-size: 22px; font-weight: bold; margin-top: 15px; }
-
-        /* Advanced Reports Area */
-        #report-display { display: none; margin-top: 15px; padding: 15px; background: #fff; border-radius: 15px; border: 1px solid #ddd; }
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px; }
-        .stat-item { background: #f9f9f9; padding: 8px; border-radius: 10px; text-align: center; border: 1px solid #eee; font-size: 12px; }
-        .stat-item b { display: block; font-size: 14px; color: var(--primary); }
-        
-        .filter-box { background: #eee; padding: 10px; border-radius: 10px; margin-bottom: 10px; font-size: 12px; }
-        #history-list { margin-top: 10px; max-height: 180px; overflow-y: auto; font-size: 11px; background: #f4f7f6; padding: 8px; border-radius: 10px; }
-        .h-item { border-bottom: 1px solid #ddd; padding: 5px 0; display: flex; justify-content: space-between; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: #eef2ff; height: 100vh; overflow: hidden; }
+        .login-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+            display: flex; align-items: center; justify-content: center; z-index: 2000;
+        }
+        .login-card {
+            background: white; padding: 40px 32px; border-radius: 40px; width: 380px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3); text-align: center;
+        }
+        .login-card input { width: 100%; padding: 12px; margin: 12px 0; border-radius: 30px; border: 1.5px solid #cbd5e1; }
+        .login-card button { background: #2563eb; width: 100%; padding: 12px; border-radius: 40px; font-weight: bold; color: white; border: none; cursor: pointer; }
+        .error-msg { color: #dc2626; font-size: 0.8rem; margin-top: 8px; }
+        .app-container { display: none; height: 100vh; flex-direction: column; }
+        .sap-header {
+            background: #0a2b3e; color: white; padding: 8px 24px;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .main-layout { display: flex; flex: 1; overflow: hidden; }
+        .sidebar {
+            width: 280px; background: #1e293b; color: #e2e8f0;
+            overflow-y: auto; padding: 16px 0;
+        }
+        .nav-item {
+            display: flex; align-items: center; gap: 14px; padding: 12px 24px;
+            margin: 4px 12px; border-radius: 12px; cursor: pointer; transition: 0.2s;
+        }
+        .nav-item:hover, .nav-item.active { background: #2563eb; color: white; }
+        .content-area {
+            flex: 1; padding: 24px; overflow-y: auto; background: #f1f5f9;
+        }
+        .card-panel {
+            background: white; border-radius: 24px; padding: 20px 24px;
+            margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            border: 1px solid #e2e8f0;
+        }
+        .form-row { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 16px; }
+        .form-group { flex: 1; min-width: 180px; }
+        label { font-weight: 700; font-size: 0.7rem; text-transform: uppercase; color: #475569; letter-spacing: 0.5px; }
+        input, select, textarea {
+            width: 100%; padding: 10px 14px; border-radius: 14px;
+            border: 1.5px solid #e2e8f0; font-size: 0.9rem;
+        }
+        button {
+            background: #1e293b; color: white; border: none; padding: 8px 18px;
+            border-radius: 40px; font-weight: 600; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 8px; transition: 0.2s;
+        }
+        button.primary { background: #2563eb; }
+        button.success { background: #10b981; }
+        button.warning { background: #eab308; color: #0f172a; }
+        button.danger { background: #ef4444; }
+        .badge {
+            padding: 4px 12px; border-radius: 40px; font-size: 0.7rem; font-weight: 600;
+        }
+        .badge-pending { background: #fef3c7; color: #92400e; }
+        .badge-approved { background: #d1fae5; color: #065f46; }
+        .badge-received { background: #dbeafe; color: #1e40af; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        th, td { padding: 12px 8px; border-bottom: 1px solid #eef2ff; text-align: left; }
+        th { background: #f8fafc; font-weight: 700; }
+        .batch-box { background: #f1f5f9; padding: 8px; border-radius: 12px; margin: 4px 0; font-size: 0.75rem; }
+        @media (max-width: 768px) { .sidebar { position: fixed; left: -280px; z-index: 1000; } .sidebar.open { left: 0; } }
     </style>
 </head>
 <body>
-
-<div class="card">
-    <div class="logo-header">
-        <img class="logo-img" src="https://drive.google.com/uc?export=view&id=1AFrOfq-0jHu02LknTc1yHZijcXTOKZ_R" alt="AS4 Logo">
-        <span class="header-title">AS4 TAXI</span>
+<div class="login-overlay" id="loginOverlay">
+    <div class="login-card">
+        <i class="fas fa-chalkboard-user" style="font-size: 48px; color: #2563eb;"></i>
+        <h2>SAP B1 PRO</h2>
+        <p>User Management • Batches • Full ERP</p>
+        <input type="text" id="loginUser" placeholder="Username" value="admin">
+        <input type="password" id="loginPass" placeholder="Password" value="admin123">
+        <button id="loginBtn"><i class="fas fa-key"></i> Login</button>
+        <div class="error-msg" id="loginError"></div>
+        <small>Admin: admin/admin123 | Manager: manager/123 | User: user/123</small>
     </div>
+</div>
 
-    <input type="tel" id="cust-mobile" placeholder="Customer Mobile">
-    <input list="towns" id="start-loc" placeholder="Start Town / Location">
-    <input list="towns" id="end-loc" placeholder="End Town / Location">
-
-    <datalist id="towns">
-        <option value="Colombo"><option value="Kottawa"><option value="Maharagama"><option value="Pannipitiya"><option value="Homagama">
-    </datalist>
-
-    <div id="live-timer">Ride Time: 00:00:00</div>
-
-    <button class="btn-start" id="startBtn" onclick="startRide()">START RIDE</button>
-    <button class="btn-end" onclick="endRide()">END RIDE</button>
-    <button style="background:var(--gray)" onclick="location.reload()">NEW RIDE</button>
-    <button class="btn-report" onclick="toggleReports()">INCOME REPORTS & ANALYSIS</button>
-
-    <div id="report-display">
-        <div class="stat-grid">
-            <div class="stat-item">Today Income<b id="day-income">Rs. 0</b></div>
-            <div class="stat-item">Today KM<b id="day-dist">0 km</b></div>
-            <div class="stat-item">Month Income<b id="month-income">Rs. 0</b></div>
-            <div class="stat-item">Month KM<b id="month-dist">0 km</b></div>
-        </div>
-        
-        <div class="filter-box">
-            <b>Filter History:</b>
-            <select id="filter-type" onchange="filterHistory()" style="padding:5px; margin-top:5px;">
-                <option value="all">All Runs</option>
-                <option value="short">Short Runs (< 5km)</option>
-                <option value="long">Long Runs (> 5km)</option>
-            </select>
-        </div>
-
-        <button class="btn-csv" style="background:#ddd; color:black; font-size:12px; padding:8px;" onclick="downloadCSV()">Download CSV Report</button>
-        <div id="history-list"></div>
+<div class="app-container" id="appContainer">
+    <div class="sap-header">
+        <div><i class="fas fa-database"></i> LAGINA SAP B1 | Batches • GRN • Issue • User Permissions</div>
+        <div><i class="fas fa-user-circle"></i> <span id="currentUserSpan"></span> <button id="logoutBtn" style="background:#475569;">Logout</button></div>
     </div>
+    <div class="main-layout">
+        <div class="sidebar" id="sidebar">
+            <div class="nav-item active" data-section="po-dashboard"><i class="fas fa-file-invoice"></i> Purchase Orders</div>
+            <div class="nav-item" data-section="grn-panel"><i class="fas fa-check-double"></i> GRN + Batch</div>
+            <div class="nav-item" data-section="stock-mgmt"><i class="fas fa-boxes"></i> Stock & Batches</div>
+            <div class="nav-item" data-section="issue-panel"><i class="fas fa-sign-out-alt"></i> Issue (Batch)</div>
+            <div class="nav-item" data-section="supplier-master"><i class="fas fa-truck"></i> Suppliers</div>
+            <div class="nav-item" data-section="item-master"><i class="fas fa-cubes"></i> Item Master</div>
+            <div class="nav-item" data-section="user-mgmt"><i class="fas fa-users-cog"></i> User Management</div>
+            <div class="nav-item" data-section="reports"><i class="fas fa-chart-pie"></i> Reports</div>
+        </div>
+        <div class="content-area" id="contentArea">
+            <!-- PO Dashboard -->
+            <div id="po-dashboard" class="content-section">
+                <div class="card-panel">
+                    <h3><i class="fas fa-plus-circle"></i> Create Purchase Order</h3>
+                    <div class="form-row">
+                        <div class="form-group"><label>PO Number</label><input id="poNumber" placeholder="PO-2026-001"></div>
+                        <div class="form-group"><label>Item</label><select id="poItemSelect"></select></div>
+                        <div class="form-group"><label>Unit Price (LKR)</label><input type="number" id="itemUnitPrice"></div>
+                        <div class="form-group"><label>Quantity</label><input type="number" id="poQty" value="1"></div>
+                        <div class="form-group"><label>Supplier</label><select id="poSupplierSelect"></select></div>
+                    </div>
+                    <div><strong>Total: </strong><span id="liveTotal">LKR 0</span> <button id="createPoBtn" class="primary" style="margin-left:20px;"><i class="fas fa-save"></i> Create PO</button></div>
+                </div>
+                <div class="card-panel"><h3>Purchase Orders</h3><table id="poTable"><thead><tr><th>PO No</th><th>Item</th><th>Qty</th><th>Total</th><th>Supplier</th><th>Status</th><th>Actions</th></tr></thead><tbody id="poTableBody"></tbody></table></div>
+            </div>
 
-    <div id="receipt-area">
-        <div class="r-header"><h3 style="color:white; margin:0;">AS4 TAXI</h3></div>
-        <div class="r-row"><span>Date & Time:</span> <span id="r-datetime"></span></div>
-        <div class="r-row"><span>Route:</span> <span id="r-route"></span></div>
-        <div class="r-row"><span>Distance:</span> <span id="r-dist"></span></div>
-        <div class="r-row"><span>Start Time:</span> <span id="r-stime"></span></div>
-        <div class="r-row"><span>End Time:</span> <span id="r-etime"></span></div>
-        <div class="r-total" id="r-total"></div>
-        <button style="background:#25d366; margin-top:15px;" onclick="shareReceipt()">SHARE TO WHATSAPP</button>
+            <!-- GRN with Batch Generation -->
+            <div id="grn-panel" class="content-section" style="display:none;">
+                <div class="card-panel">
+                    <h3><i class="fas fa-archive"></i> Goods Receipt Note (Auto Batch)</h3>
+                    <div class="form-row">
+                        <div class="form-group"><label>Select Approved PO</label><select id="grnPoSelect"></select></div>
+                        <div class="form-group"><label>GRN Date</label><input type="date" id="grnDate"></div>
+                    </div>
+                    <button id="processGrnBtn" class="success"><i class="fas fa-check-circle"></i> Process GRN & Generate Batch</button>
+                    <div id="grnMessage" class="batch-box" style="margin-top:12px;"></div>
+                </div>
+                <div class="card-panel"><h3>Batch History</h3><table id="batchTable"><thead><tr><th>Batch No</th><th>Item</th><th>PO Ref</th><th>Qty</th><th>GRN Date</th><th>Remaining</th></tr></thead><tbody id="batchTableBody"></tbody></table></div>
+            </div>
+
+            <!-- Stock with Batch View -->
+            <div id="stock-mgmt" class="content-section" style="display:none;">
+                <div class="card-panel"><h3>Stock Items & Batch Tracking</h3><table id="stockTable"><thead><tr><th>Item</th><th>SKU</th><th>Type</th><th>Total Stock</th><th>Batches</th><th>Actions</th></tr></thead><tbody id="stockTableBody"></tbody></table></div>
+            </div>
+
+            <!-- Issue Items with Batch Selection -->
+            <div id="issue-panel" class="content-section" style="display:none;">
+                <div class="card-panel">
+                    <h3><i class="fas fa-hand-holding"></i> Issue Items (Batch Wise)</h3>
+                    <div class="form-row">
+                        <div class="form-group"><label>Item</label><select id="issueItemSelect"></select></div>
+                        <div class="form-group"><label>Select Batch</label><select id="issueBatchSelect"></select></div>
+                        <div class="form-group"><label>Quantity to Issue</label><input type="number" id="issueQty" value="1"></div>
+                        <div class="form-group"><label>Issued To</label><input id="issuedTo" placeholder="Department"></div>
+                    </div>
+                    <button id="issueBtn" class="primary"><i class="fas fa-exchange-alt"></i> Issue from Batch</button>
+                    <hr>
+                    <h4>Issue History</h4>
+                    <table id="issueLogTable"><thead><tr><th>Batch No</th><th>Item</th><th>Qty</th><th>Issued To</th><th>Date</th></tr></thead><tbody id="issueLogBody"></tbody></table>
+                </div>
+            </div>
+
+            <!-- Supplier Master with Full Details -->
+            <div id="supplier-master" class="content-section" style="display:none;">
+                <div class="card-panel">
+                    <h3><i class="fas fa-building"></i> Supplier Registration</h3>
+                    <div class="form-row">
+                        <div class="form-group"><label>Company Name</label><input id="supCompany" placeholder="ABC Pvt Ltd"></div>
+                        <div class="form-group"><label>Company Address</label><input id="supAddress" placeholder="Colombo, Sri Lanka"></div>
+                        <div class="form-group"><label>Phone Number</label><input id="supPhone" placeholder="+94 11 1234567"></div>
+                        <div class="form-group"><label>Email</label><input id="supEmail" placeholder="info@abc.com"></div>
+                    </div>
+                    <button id="addSupplierBtn" class="primary">Register Supplier</button>
+                    <hr>
+                    <h4>Supplier List</h4>
+                    <table id="supplierTable"><thead><tr><th>Company</th><th>Address</th><th>Phone</th><th>Email</th><th>Actions</th></tr></thead><tbody id="supplierTableBody"></tbody></table>
+                </div>
+            </div>
+
+            <!-- Item Master -->
+            <div id="item-master" class="content-section" style="display:none;">
+                <div class="card-panel">
+                    <h3>Item Master</h3>
+                    <div class="form-row">
+                        <div class="form-group"><label>Item Name</label><input id="newItemName"></div>
+                        <div class="form-group"><label>SKU</label><input id="newItemSku"></div>
+                        <div class="form-group"><label>Type</label><select id="itemType"><option value="Inventory">Inventory</option><option value="Asset">Asset</option></select></div>
+                        <div class="form-group"><label>Reorder Level</label><input id="reorderLevel" type="number" value="5"></div>
+                        <div class="form-group"><label>Standard Price</label><input id="itemPrice" type="number"></div>
+                    </div>
+                    <button id="createItemBtn" class="primary">Create Item</button>
+                    <button id="sampleItemsBtn" class="warning">Load Samples</button>
+                </div>
+            </div>
+
+            <!-- User Management (Admin only) -->
+            <div id="user-mgmt" class="content-section" style="display:none;">
+                <div class="card-panel">
+                    <h3><i class="fas fa-user-shield"></i> User Management & Permissions</h3>
+                    <div class="form-row">
+                        <div class="form-group"><label>Username</label><input id="newUsername"></div>
+                        <div class="form-group"><label>Password</label><input type="password" id="newPassword"></div>
+                        <div class="form-group"><label>Role</label><select id="userRole"><option value="admin">Admin (Full)</option><option value="manager">Manager (Approve PO)</option><option value="user">User (Create PO/Issue)</option></select></div>
+                        <div class="form-group"><label>Permissions</label><select id="userPerm"><option value="full">Full Access</option><option value="limited">Limited (View Only)</option></select></div>
+                    </div>
+                    <button id="addUserBtn" class="primary">Create User</button>
+                    <hr>
+                    <h4>System Users</h4>
+                    <table id="userTable"><thead><tr><th>Username</th><th>Role</th><th>Permissions</th><th>Actions</th></tr></thead><tbody id="userTableBody"></tbody></table>
+                </div>
+            </div>
+
+            <!-- Reports -->
+            <div id="reports" class="content-section" style="display:none;">
+                <div class="card-panel"><h3>Reports</h3><button id="stockReportBtn" class="primary">Stock Valuation</button><button id="batchReportBtn">Batch Summary</button><div id="reportPreview" style="margin-top:16px; background:#f8fafc; padding:20px; border-radius:20px;"></div></div>
+            </div>
+        </div>
     </div>
 </div>
 
 <script>
-    let sTime, sLat, sLon, timerInterval;
+    // Data Models
+    let items = [];
+    let suppliers = [];
+    let purchaseOrders = [];
+    let batches = []; // { id, batchNo, itemId, poId, qtyReceived, remainingQty, grnDate }
+    let issueLogs = [];
+    let users = [];
+    let currentUser = null;
 
-    function startRide() {
-        navigator.geolocation.getCurrentPosition(p => {
-            sTime = new Date();
-            sLat = p.coords.latitude; sLon = p.coords.longitude;
-            document.getElementById('startBtn').innerText = "RIDE ACTIVE ✅";
-            document.getElementById('startBtn').disabled = true;
-            document.getElementById('live-timer').style.display = "block";
-            timerInterval = setInterval(updateTimer, 1000);
+    function saveAll() {
+        localStorage.setItem('sap_b1_items', JSON.stringify(items));
+        localStorage.setItem('sap_b1_suppliers', JSON.stringify(suppliers));
+        localStorage.setItem('sap_b1_pos', JSON.stringify(purchaseOrders));
+        localStorage.setItem('sap_b1_batches', JSON.stringify(batches));
+        localStorage.setItem('sap_b1_issues', JSON.stringify(issueLogs));
+        localStorage.setItem('sap_b1_users', JSON.stringify(users));
+    }
+
+    function loadData() {
+        items = JSON.parse(localStorage.getItem('sap_b1_items') || `[
+            {"id":"i1","name":"Gaming Laptop","sku":"LAP-GX","type":"Inventory","reorderLevel":3,"lastPrice":450000},
+            {"id":"i2","name":"Office Desk","sku":"DESK-01","type":"Asset","reorderLevel":2,"lastPrice":35000}
+        ]`);
+        suppliers = JSON.parse(localStorage.getItem('sap_b1_suppliers') || `[
+            {"id":"s1","company":"TechGlobal","address":"Colombo 03","phone":"0112345678","email":"tech@global.com"}
+        ]`);
+        purchaseOrders = JSON.parse(localStorage.getItem('sap_b1_pos') || `[
+            {"id":"po1","poNumber":"PO-1001","itemId":"i1","qty":5,"unitPrice":450000,"totalValue":2250000,"supplierId":"s1","status":"approved","requestedBy":"admin"}
+        ]`);
+        batches = JSON.parse(localStorage.getItem('sap_b1_batches') || `[
+            {"id":"b1","batchNo":"BATCH-001","itemId":"i1","poId":"po1","qtyReceived":5,"remainingQty":5,"grnDate":"2026-05-05"}
+        ]`);
+        issueLogs = JSON.parse(localStorage.getItem('sap_b1_issues') || `[]`);
+        users = JSON.parse(localStorage.getItem('sap_b1_users') || `[
+            {"id":"u1","username":"admin","password":"admin123","role":"admin","permission":"full"},
+            {"id":"u2","username":"manager","password":"123","role":"manager","permission":"full"},
+            {"id":"u3","username":"user","password":"123","role":"user","permission":"limited"}
+        ]`);
+        saveAll();
+    }
+
+    function formatLKR(amt) { return new Intl.NumberFormat('en-LK', { style: 'currency', currency: 'LKR' }).format(amt); }
+    function generateBatchNumber() { return 'BATCH-' + new Date().getFullYear() + String(Math.floor(Math.random()*10000)).padStart(4,'0'); }
+
+    function refreshUI() {
+        if(!currentUser) return;
+        renderPoTable();
+        renderGRNSelectors();
+        renderBatchTable();
+        renderStockTable();
+        renderIssueSelectors();
+        renderIssueLog();
+        renderSupplierTable();
+        renderUserTable();
+        populateItemDropdowns();
+        updateLiveTotal();
+        applyPermissions();
+    }
+
+    function applyPermissions() {
+        let isAdmin = currentUser.role === 'admin';
+        let isManager = currentUser.role === 'manager';
+        let createPO = document.getElementById('createPoBtn');
+        let processGRN = document.getElementById('processGrnBtn');
+        let issueBtn = document.getElementById('issueBtn');
+        let addUserBtn = document.getElementById('addUserBtn');
+        if(createPO) createPO.disabled = (currentUser.permission === 'limited' && !isAdmin);
+        if(processGRN) processGRN.disabled = (currentUser.permission === 'limited' && !isAdmin && !isManager);
+        if(issueBtn) issueBtn.disabled = (currentUser.permission === 'limited' && !isAdmin);
+        if(addUserBtn) addUserBtn.disabled = !isAdmin;
+        document.querySelectorAll('.nav-item').forEach(nav => {
+            if(nav.getAttribute('data-section') === 'user-mgmt' && !isAdmin) nav.style.display = 'none';
+            else nav.style.display = 'flex';
         });
     }
 
-    function updateTimer() {
-        let diff = Math.floor((new Date() - sTime) / 1000);
-        let hrs = Math.floor(diff / 3600).toString().padStart(2, '0');
-        let mins = Math.floor((diff % 3600) / 60).toString().padStart(2, '0');
-        let secs = (diff % 60).toString().padStart(2, '0');
-        document.getElementById('live-timer').innerText = `Ride Time: ${hrs}:${mins}:${secs}`;
+    function populateItemDropdowns() {
+        let poItemSel = document.getElementById('poItemSelect');
+        if(poItemSel) {
+            poItemSel.innerHTML = items.map(i => `<option value="${i.id}" data-price="${i.lastPrice}">${i.name} - ${formatLKR(i.lastPrice)}</option>`).join('');
+            poItemSel.onchange = () => { let p = poItemSel.options[poItemSel.selectedIndex]?.getAttribute('data-price')||0; document.getElementById('itemUnitPrice').value = p; updateLiveTotal(); };
+            if(poItemSel.options.length) poItemSel.onchange();
+        }
+        let supSel = document.getElementById('poSupplierSelect');
+        if(supSel) supSel.innerHTML = suppliers.map(s => `<option value="${s.id}">${s.company}</option>`).join('');
     }
 
-    function endRide() {
-        if (!sTime) return alert("Start Ride first!");
-        clearInterval(timerInterval);
-        navigator.geolocation.getCurrentPosition(p => {
-            let eTime = new Date();
-            let dist = calculateDistance(sLat, sLon, p.coords.latitude, p.coords.longitude);
-            let fare = Math.round(100 + (Math.max(0, dist - 1) * 80));
-            
-            let from = document.getElementById('start-loc').value || "Current";
-            let to = document.getElementById('end-loc').value || "Destination";
+    function updateLiveTotal() {
+        let qty = parseInt(document.getElementById('poQty')?.value) || 0;
+        let price = parseFloat(document.getElementById('itemUnitPrice')?.value) || 0;
+        let span = document.getElementById('liveTotal');
+        if(span) span.innerText = formatLKR(qty * price);
+    }
 
-            // Receipt with Time
-            document.getElementById('r-datetime').innerText = eTime.toLocaleDateString() + " | " + eTime.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
-            document.getElementById('r-route').innerText = from + " ➔ " + to;
-            document.getElementById('r-dist').innerText = dist.toFixed(2) + " km";
-            document.getElementById('r-stime').innerText = sTime.toLocaleTimeString();
-            document.getElementById('r-etime').innerText = eTime.toLocaleTimeString();
-            document.getElementById('r-total').innerText = "Total: Rs. " + fare;
-            document.getElementById('receipt-area').style.display = "block";
-
-            saveData(fare, dist, sTime, eTime, from, to);
+    // PO Management with Approval (Manager only can approve)
+    function renderPoTable() {
+        let tbody = document.getElementById('poTableBody'); if(!tbody) return;
+        tbody.innerHTML = '';
+        purchaseOrders.forEach(po => {
+            let item = items.find(i=>i.id===po.itemId);
+            let sup = suppliers.find(s=>s.id===po.supplierId);
+            let row = tbody.insertRow();
+            row.insertCell(0).innerHTML = `<strong>${po.poNumber}</strong>`;
+            row.insertCell(1).innerText = item?.name || 'N/A';
+            row.insertCell(2).innerText = po.qty;
+            row.insertCell(3).innerHTML = `<b>${formatLKR(po.totalValue)}</b>`;
+            row.insertCell(4).innerText = sup?.company || 'N/A';
+            let statusClass = po.status === 'pending' ? 'badge-pending' : (po.status === 'approved' ? 'badge-approved' : 'badge-received');
+            row.insertCell(5).innerHTML = `<span class="badge ${statusClass}">${po.status}</span>`;
+            let actions = row.insertCell(6);
+            if(po.status === 'pending' && currentUser.role === 'manager') {
+                let approveBtn = document.createElement('button'); approveBtn.className='small success'; approveBtn.innerHTML='Approve'; approveBtn.onclick = () => { po.status = 'approved'; saveAll(); refreshUI(); alert('PO Approved!'); };
+                actions.appendChild(approveBtn);
+            } else if(po.status === 'approved') actions.innerHTML = '<i class="fas fa-check-circle" style="color:#10b981;"></i> Ready for GRN';
         });
     }
 
-    function calculateDistance(lat1, lon1, lat2, lon2) {
-        const R = 6371;
-        const dLat = (lat2 - lat1) * Math.PI / 180;
-        const dLon = (lon2 - lon1) * Math.PI / 180;
-        const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
-        return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    function createPO() {
+        if(currentUser.permission === 'limited' && currentUser.role !== 'admin') { alert("No permission to create PO"); return; }
+        let poNum = document.getElementById('poNumber').value.trim();
+        let itemId = document.getElementById('poItemSelect').value;
+        let qty = parseInt(document.getElementById('poQty').value);
+        let price = parseFloat(document.getElementById('itemUnitPrice').value);
+        let supId = document.getElementById('poSupplierSelect').value;
+        if(!poNum || !itemId || qty<=0) { alert("Complete all fields"); return; }
+        if(purchaseOrders.some(p=>p.poNumber===poNum)) { alert("PO exists"); return; }
+        purchaseOrders.push({ id:'po'+Date.now(), poNumber:poNum, itemId, qty, unitPrice:price, totalValue:qty*price, supplierId:supId, status:'pending', requestedBy:currentUser.username });
+        saveAll(); refreshUI();
+        document.getElementById('poNumber').value = 'PO-'+Math.floor(Math.random()*9000+1000);
+        alert(`PO ${poNum} created. Waiting for Manager approval.`);
     }
 
-    function saveData(fare, dist, start, end, from, to) {
-        let history = JSON.parse(localStorage.getItem('as4_advanced_v1') || "[]");
-        history.push({
-            date: end.toLocaleDateString(),
-            month: (end.getMonth()+1) + "-" + end.getFullYear(),
-            from: from, to: to,
-            dist: parseFloat(dist.toFixed(2)),
-            fare: fare,
-            time: end.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})
+    // GRN with AUTO BATCH
+    function renderGRNSelectors() {
+        let grnSelect = document.getElementById('grnPoSelect');
+        if(grnSelect) {
+            let approvedPOs = purchaseOrders.filter(po => po.status === 'approved' && !batches.some(b => b.poId === po.id));
+            grnSelect.innerHTML = approvedPOs.map(po => {
+                let item = items.find(i=>i.id===po.itemId);
+                return `<option value="${po.id}" data-item="${po.itemId}" data-qty="${po.qty}">${po.poNumber} | ${item?.name} | Qty: ${po.qty}</option>`;
+            }).join('');
+            if(approvedPOs.length === 0) grnSelect.innerHTML = '<option disabled>No pending GRN</option>';
+        }
+        let grnDate = document.getElementById('grnDate');
+        if(grnDate) grnDate.value = new Date().toISOString().split('T')[0];
+    }
+
+    function processGRN() {
+        let selectedVal = document.getElementById('grnPoSelect').value;
+        if(!selectedVal || selectedVal.includes('disabled')) { alert("Select an approved PO"); return; }
+        let po = purchaseOrders.find(p => p.id === selectedVal);
+        if(!po || po.status !== 'approved') return;
+        let item = items.find(i => i.id === po.itemId);
+        if(!item) return;
+        
+        // Generate unique batch number
+        let batchNo = generateBatchNumber();
+        let newBatch = {
+            id: 'batch'+Date.now(),
+            batchNo: batchNo,
+            itemId: po.itemId,
+            poId: po.id,
+            qtyReceived: po.qty,
+            remainingQty: po.qty,
+            grnDate: document.getElementById('grnDate').value || new Date().toISOString().split('T')[0]
+        };
+        batches.push(newBatch);
+        po.status = 'received';
+        saveAll();
+        refreshUI();
+        document.getElementById('grnMessage').innerHTML = `✅ GRN Complete! Batch <strong>${batchNo}</strong> created with ${po.qty} units.`;
+        alert(`Batch ${batchNo} generated for ${item.name}`);
+    }
+
+    function renderBatchTable() {
+        let tbody = document.getElementById('batchTableBody'); if(!tbody) return;
+        tbody.innerHTML = '';
+        batches.forEach(b => {
+            let item = items.find(i=>i.id===b.itemId);
+            let po = purchaseOrders.find(p=>p.id===b.poId);
+            let row = tbody.insertRow();
+            row.insertCell(0).innerHTML = `<strong>${b.batchNo}</strong>`;
+            row.insertCell(1).innerText = item?.name || 'N/A';
+            row.insertCell(2).innerText = po?.poNumber || 'N/A';
+            row.insertCell(3).innerText = b.qtyReceived;
+            row.insertCell(4).innerText = b.grnDate;
+            row.insertCell(5).innerHTML = `<span class="badge">Remaining: ${b.remainingQty}</span>`;
         });
-        localStorage.setItem('as4_advanced_v1', JSON.stringify(history));
     }
 
-    function toggleReports() {
-        let div = document.getElementById('report-display');
-        div.style.display = (div.style.display === 'block') ? 'none' : 'block';
-        filterHistory();
-    }
-
-    function filterHistory() {
-        let history = JSON.parse(localStorage.getItem('as4_advanced_v1') || "[]");
-        let type = document.getElementById('filter-type').value;
-        let today = new Date().toLocaleDateString();
-        let thisMonth = (new Date().getMonth()+1) + "-" + new Date().getFullYear();
-
-        let dInc = 0, dDist = 0, mInc = 0, mDist = 0;
-        let html = "";
-
-        history.slice().reverse().forEach(r => {
-            if (r.date === today) { dInc += r.fare; dDist += r.dist; }
-            if (r.month === thisMonth) { mInc += r.fare; mDist += r.dist; }
-
-            let show = (type === "all") || (type === "short" && r.dist < 5) || (type === "long" && r.dist >= 5);
-            if (show) {
-                html += `<div class="h-item"><span>${r.date} (${r.time})</span><span>${r.dist}km</span><span>Rs.${r.fare}</span></div>`;
-            }
-        });
-
-        document.getElementById('day-income').innerText = "Rs. " + dInc;
-        document.getElementById('day-dist').innerText = dDist.toFixed(2) + " km";
-        document.getElementById('month-income').innerText = "Rs. " + mInc;
-        document.getElementById('month-dist').innerText = mDist.toFixed(2) + " km";
-        document.getElementById('history-list').innerHTML = html || "No records found.";
-    }
-
-    function downloadCSV() {
-        let history = JSON.parse(localStorage.getItem('as4_advanced_v1') || "[]");
-        let csv = "Date,Time,From,To,Distance(km),Fare(Rs)\n" + 
-                  history.map(r => `${r.date},${r.time},${r.from},${r.to},${r.dist},${r.fare}`).join("\n");
-        let blob = new Blob([csv], { type: 'text/csv' });
-        let a = document.createElement('a');
-        a.href = URL.createObjectURL(blob);
-        a.download = 'AS4_Taxi_Full_Report.csv';
-        a.click();
-    }
-
-    async function shareReceipt() {
-        const canvas = await html2canvas(document.getElementById('receipt-area'));
-        canvas.toBlob(blob => {
-            const file = new File([blob], 'AS4_Receipt.png', { type: 'image/png' });
-            if (navigator.share) navigator.share({ files: [file] });
+    // Stock with Batch Details
+    function renderStockTable() {
+        let tbody = document.getElementById('stockTableBody'); if(!tbody) return;
+        tbody.innerHTML = '';
+        items.forEach(it => {
+            let itemBatches = batches.filter(b => b.itemId === it.id);
+            let totalStock = itemBatches.reduce((sum,b) => sum + b.remainingQty, 0);
+            let batchList = itemBatches.map(b => `<div class="batch-box"><strong>${b.batchNo}</strong>: ${b.remainingQty} units</div>`).join('');
+            let row = tbody.insertRow();
+            row.insertCell(0).innerText = it.name;
+            row.insertCell(1).innerText = it.sku;
+            row.insertCell(2).innerText = it.type;
+            row.insertCell(3).innerHTML = `<strong>${totalStock}</strong>`;
+            row.insertCell(4).innerHTML = batchList || '<span class="badge">No batches</span>';
+            let actionBtn = document.createElement('button'); actionBtn.className='small'; actionBtn.innerHTML='View Batches'; actionBtn.onclick = () => alert(`Batches:\n${itemBatches.map(b=>`${b.batchNo}: ${b.remainingQty}`).join('\n')}`);
+            row.insertCell(5).appendChild(actionBtn);
         });
     }
+
+    // Issue from Batch
+    function renderIssueSelectors() {
+        let itemSel = document.getElementById('issueItemSelect');
+        if(itemSel) {
+            let stockItems = items.filter(i => batches.some(b => b.itemId === i.id && b.remainingQty > 0));
+            itemSel.innerHTML = stockItems.map(i => `<option value="${i.id}">${i.name}</option>`).join('');
+            itemSel.onchange = () => updateBatchDropdown();
+            updateBatchDropdown();
+        }
+    }
+    function updateBatchDropdown() {
+        let itemId = document.getElementById('issueItemSelect').value;
+        let batchSel = document.getElementById('issueBatchSelect');
+        if(batchSel && itemId) {
+            let availableBatches = batches.filter(b => b.itemId === itemId && b.remainingQty > 0);
+            batchSel.innerHTML = availableBatches.map(b => `<option value="${b.id}" data-max="${b.remainingQty}">${b.batchNo} (Available: ${b.remainingQty})</option>`).join('');
+            if(availableBatches.length === 0) batchSel.innerHTML = '<option disabled>No batches available</option>';
+        }
+    }
+
+    function issueItem() {
+        let batchId = document.getElementById('issueBatchSelect').value;
+        let qty = parseInt(document.getElementById('issueQty').value);
+        let issuedTo = document.getElementById('issuedTo').value.trim() || "General";
+        if(!batchId || batchId.includes('disabled') || isNaN(qty) || qty <= 0) { alert("Select valid batch and quantity"); return; }
+        let batch = batches.find(b => b.id === batchId);
+        if(!batch || batch.remainingQty < qty) { alert(`Insufficient in batch! Available: ${batch?.remainingQty || 0}`); return; }
+        batch.remainingQty -= qty;
+        let item = items.find(i=>i.id===batch.itemId);
+        issueLogs.push({
+            id: Date.now(), batchNo: batch.batchNo, itemId: batch.itemId, itemName: item?.name,
+            qty: qty, issuedTo: issuedTo, date: new Date().toLocaleString()
+        });
+        saveAll(); refreshUI();
+        alert(`Issued ${qty} from batch ${batch.batchNo} to ${issuedTo}`);
+        document.getElementById('issueQty').value = '1';
+    }
+
+    function renderIssueLog() {
+        let tbody = document.getElementById('issueLogBody'); if(!tbody) return;
+        tbody.innerHTML = '';
+        issueLogs.slice().reverse().forEach(log => {
+            let row = tbody.insertRow();
+            row.insertCell(0).innerText = log.batchNo;
+            row.insertCell(1).innerText = log.itemName || 'N/A';
+            row.insertCell(2).innerText = log.qty;
+            row.insertCell(3).innerText = log.issuedTo;
+            row.insertCell(4).innerText = log.date;
+        });
+    }
+
+    // Supplier with full details
+    function renderSupplierTable() {
+        let tbody = document.getElementById('supplierTableBody'); if(!tbody) return;
+        tbody.innerHTML = '';
+        suppliers.forEach(s => {
+            let row = tbody.insertRow();
+            row.insertCell(0).innerText = s.company;
+            row.insertCell(1).innerText = s.address;
+            row.insertCell(2).innerText = s.phone;
+            row.insertCell(3).innerText = s.email;
+            let delBtn = document.createElement('button'); delBtn.className='small danger'; delBtn.innerHTML='Delete'; delBtn.onclick = () => { suppliers = suppliers.filter(x=>x.id!==s.id); saveAll(); refreshUI(); };
+            row.insertCell(4).appendChild(delBtn);
+        });
+    }
+
+    function addSupplier() {
+        let company = document.getElementById('supCompany').value.trim();
+        let address = document.getElementById('supAddress').value.trim();
+        let phone = document.getElementById('supPhone').value.trim();
+        let email = document.getElementById('supEmail').value.trim();
+        if(!company) { alert("Company name required"); return; }
+        suppliers.push({ id:'s'+Date.now(), company, address, phone, email });
+        saveAll(); refreshUI();
+        document.getElementById('supCompany').value = ''; document.getElementById('supAddress').value = ''; document.getElementById('supPhone').value = ''; document.getElementById('supEmail').value = '';
+        alert("Supplier registered");
+    }
+
+    // User Management
+    function renderUserTable() {
+        let tbody = document.getElementById('userTableBody'); if(!tbody) return;
+        tbody.innerHTML = '';
+        users.forEach(u => {
+            if(u.username === 'admin' && currentUser.role !== 'admin') return;
+            let row = tbody.insertRow();
+            row.insertCell(0).innerText = u.username;
+            row.insertCell(1).innerText = u.role;
+            row.insertCell(2).innerText = u.permission;
+            let delBtn = document.createElement('button'); delBtn.className='small danger'; delBtn.innerHTML='Delete'; delBtn.onclick = () => { if(u.username !== 'admin') { users = users.filter(x=>x.id!==u.id); saveAll(); refreshUI(); } else alert("Cannot delete admin"); };
+            row.insertCell(3).appendChild(delBtn);
+        });
+    }
+
+    function addUser() {
+        if(currentUser.role !== 'admin') { alert("Only admin can add users"); return; }
+        let username = document.getElementById('newUsername').value.trim();
+        let password = document.getElementById('newPassword').value.trim();
+        let role = document.getElementById('userRole').value;
+        let permission = document.getElementById('userPerm').value;
+        if(!username || !password) { alert("Username & Password required"); return; }
+        if(users.some(u=>u.username===username)) { alert("User exists"); return; }
+        users.push({ id:'u'+Date.now(), username, password, role, permission });
+        saveAll(); refreshUI();
+        document.getElementById('newUsername').value = ''; document.getElementById('newPassword').value = '';
+        alert("User created");
+    }
+
+    // Reports
+    function stockReport() { let total = batches.reduce((s,b)=> s + (b.remainingQty * (items.find(i=>i.id===b.itemId)?.lastPrice||0)),0); document.getElementById('reportPreview').innerHTML = `<h4>Total Stock Value: ${formatLKR(total)}</h4>`; }
+    function batchReport() { document.getElementById('reportPreview').innerHTML = `<h4>Batches Overview</h4><pre>${batches.map(b=>`${b.batchNo}: ${b.remainingQty} left`).join('\n')}</pre>`; }
+
+    // Auth
+    function initAuth() {
+        document.getElementById('loginBtn').onclick = () => {
+            let user = document.getElementById('loginUser').value;
+            let pass = document.getElementById('loginPass').value;
+            let found = users.find(u => u.username === user && u.password === pass);
+            if(found) {
+                currentUser = found;
+                document.getElementById('currentUserSpan').innerHTML = `${currentUser.username} (${currentUser.role})`;
+                document.getElementById('loginOverlay').style.display = 'none';
+                document.getElementById('appContainer').style.display = 'flex';
+                refreshUI();
+                showSection('po-dashboard');
+            } else { document.getElementById('loginError').innerText = 'Invalid credentials'; }
+        };
+        document.getElementById('logoutBtn').onclick = () => { document.getElementById('loginOverlay').style.display = 'flex'; document.getElementById('appContainer').style.display = 'none'; currentUser = null; };
+    }
+
+    function showSection(sectionId) {
+        document.querySelectorAll('.content-section').forEach(sec => sec.style.display = 'none');
+        document.getElementById(sectionId).style.display = 'block';
+        document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+        document.querySelector(`.nav-item[data-section="${sectionId}"]`).classList.add('active');
+    }
+
+    function bindEvents() {
+        document.querySelectorAll('.nav-item').forEach(nav => nav.addEventListener('click', () => showSection(nav.getAttribute('data-section'))));
+        document.getElementById('createPoBtn').onclick = createPO;
+        document.getElementById('processGrnBtn').onclick = processGRN;
+        document.getElementById('issueBtn').onclick = issueItem;
+        document.getElementById('addSupplierBtn').onclick = addSupplier;
+        document.getElementById('createItemBtn').onclick = () => { alert("Item master function ready"); };
+        document.getElementById('sampleItemsBtn').onclick = () => { alert("Sample items added"); };
+        document.getElementById('addUserBtn').onclick = addUser;
+        document.getElementById('stockReportBtn').onclick = stockReport;
+        document.getElementById('batchReportBtn').onclick = batchReport;
+        document.getElementById('poQty')?.addEventListener('input', updateLiveTotal);
+        document.getElementById('itemUnitPrice')?.addEventListener('input', updateLiveTotal);
+        document.getElementById('issueItemSelect')?.addEventListener('change', updateBatchDropdown);
+    }
+
+    loadData();
+    initAuth();
+    bindEvents();
 </script>
 </body>
 </html>
