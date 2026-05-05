@@ -5,16 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Smart-inventor-management-systems</title>
     
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
-    <!-- Chart.js & html2pdf -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
     <style>
-        /* ========== LOGIN PAGE STYLES (Your Professional Glassmorphism Design) ========== */
         * {
             margin: 0;
             padding: 0;
@@ -22,6 +19,7 @@
             font-family: 'Poppins', sans-serif;
         }
 
+        /* Login Page Styles */
         .login-page {
             background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2070&auto=format&fit=crop') no-repeat center center fixed;
             background-size: cover;
@@ -43,10 +41,8 @@
             background: rgba(255, 255, 255, 0.05);
             border-radius: 16px;
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2);
-            z-index: 10;
         }
 
         .login-box h2 {
@@ -55,7 +51,6 @@
             margin-bottom: 45px;
             font-weight: 500;
             letter-spacing: 2px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
 
         .input-group {
@@ -69,7 +64,6 @@
             top: 12px;
             color: rgba(255, 255, 255, 0.6);
             font-size: 16px;
-            transition: 0.3s;
         }
 
         .input-group input {
@@ -81,7 +75,6 @@
             border: none;
             border-bottom: 1.5px solid rgba(255, 255, 255, 0.4);
             outline: none;
-            transition: 0.3s;
         }
 
         .input-group label {
@@ -99,7 +92,6 @@
             left: 0;
             font-size: 12px;
             color: #38bdf8;
-            font-weight: 500;
         }
 
         .input-group input:focus ~ i,
@@ -121,37 +113,13 @@
             font-size: 14px;
             font-weight: 600;
             letter-spacing: 1.5px;
-            text-transform: uppercase;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .login-btn:hover {
             background: #0284c7;
-            box-shadow: 0 10px 20px rgba(14, 165, 233, 0.3);
             transform: translateY(-1px);
-        }
-
-        .login-btn:disabled {
-            background: #475569;
-            cursor: not-allowed;
-        }
-
-        .signup-link {
-            text-align: center;
-            margin-top: 30px;
-            color: #ffffff;
-            font-size: 13px;
-        }
-
-        .signup-link a {
-            color: #38bdf8;
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        .signup-link a:hover {
-            text-decoration: underline;
         }
 
         .login-error {
@@ -161,7 +129,7 @@
             margin-top: 15px;
         }
 
-        /* ========== MAIN APP STYLES ========== */
+        /* Main App Styles */
         .app-container {
             display: none;
             height: 100vh;
@@ -203,8 +171,7 @@
             transition: 0.2s;
         }
 
-        .nav-item:hover,
-        .nav-item.active {
+        .nav-item:hover, .nav-item.active {
             background: #2563eb;
             color: white;
         }
@@ -236,7 +203,6 @@
             border-radius: 24px;
             padding: 20px;
             text-align: center;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
         .stat-card i {
@@ -266,10 +232,11 @@
             font-size: 0.7rem;
             text-transform: uppercase;
             color: #475569;
+            display: block;
+            margin-bottom: 5px;
         }
 
-        input,
-        select {
+        input, select {
             width: 100%;
             padding: 10px 14px;
             border-radius: 14px;
@@ -340,40 +307,27 @@
             align-items: center;
             gap: 10px;
         }
-
-        @media (max-width: 768px) {
-            .sidebar {
-                position: fixed;
-                left: -260px;
-                z-index: 1000;
-            }
-            .sidebar.open { left: 0; }
-        }
     </style>
 </head>
 <body>
 
-    <!-- LOGIN PAGE - Your Professional Glassmorphism Design -->
+    <!-- LOGIN PAGE -->
     <div class="login-page" id="loginPage">
         <div class="login-box">
             <form id="loginForm">
                 <h2>SMART INVENTOR</h2>
-                
                 <div class="input-group">
                     <i class="fas fa-user"></i>
                     <input type="text" id="loginUsername" required>
                     <label>Username</label>
                 </div>
-
                 <div class="input-group">
                     <i class="fas fa-lock"></i>
                     <input type="password" id="loginPassword" required>
                     <label>Password</label>
                 </div>
-
-                <button type="submit" class="login-btn" id="submitBtn">Sign In</button>
-
-                <p class="signup-link">
+                <button type="submit" class="login-btn">Sign In</button>
+                <p class="signup-link" style="color:white; text-align:center; margin-top:15px;">
                     Demo: <strong>admin/admin123</strong> | <strong>manager/123</strong>
                 </p>
                 <div class="login-error" id="loginErrorMsg"></div>
@@ -388,7 +342,7 @@
             <div><i class="fas fa-user-circle"></i> <span id="currentUserSpan"></span> <button id="logoutBtn" style="background:#475569;">Logout</button></div>
         </div>
         <div class="main-layout">
-            <div class="sidebar" id="sidebar">
+            <div class="sidebar">
                 <div class="nav-item active" data-section="dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</div>
                 <div class="nav-item" data-section="po-dashboard"><i class="fas fa-file-invoice"></i> Purchase Orders</div>
                 <div class="nav-item" data-section="grn-panel"><i class="fas fa-check-double"></i> GRN + Batch</div>
@@ -399,14 +353,14 @@
                 <div class="nav-item" data-section="user-mgmt"><i class="fas fa-users-cog"></i> User Management</div>
             </div>
             <div class="content-area" id="contentArea">
-                <!-- Dashboard -->
+                <!-- DASHBOARD -->
                 <div id="dashboard" class="content-section">
                     <div class="dashboard-cards" id="dashboardCards"></div>
                     <div class="card-panel"><canvas id="stockChart" height="80"></canvas></div>
                     <div class="card-panel"><h3>Recent Notifications</h3><div id="notificationList"></div></div>
                 </div>
 
-                <!-- PO Section -->
+                <!-- PO DASHBOARD -->
                 <div id="po-dashboard" class="content-section" style="display:none;">
                     <div class="card-panel">
                         <h3>Create Purchase Order</h3>
@@ -423,58 +377,167 @@
                         <div class="filter-bar">
                             <div class="form-group"><label>From Date</label><input type="date" id="poFilterFrom"></div>
                             <div class="form-group"><label>To Date</label><input type="date" id="poFilterTo"></div>
-                            <div class="form-group"><label>Status</label><select id="poFilterStatus"><option value="all">All</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option><option value="received">Received</option></select></div>
-                            <button id="applyPoFilter" class="small">Filter</button>
-                            <button id="printPoListBtn" class="warning small"><i class="fas fa-print"></i> Print PDF</button>
+                            <div class="form-group"><label>Status</label><select id="poFilterStatus"><option value="all">All</option><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option></select></div>
+                            <button id="applyPoFilter">Filter</button>
+                            <button id="printPoListBtn" class="warning"><i class="fas fa-print"></i> Print PDF</button>
                         </div>
                         <table id="poTable"><thead><tr><th>PO No</th><th>Item</th><th>Qty</th><th>Total</th><th>Supplier</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead><tbody id="poTableBody"></tbody></table>
                     </div>
                 </div>
 
-                <!-- GRN -->
+                <!-- GRN PANEL -->
                 <div id="grn-panel" class="content-section" style="display:none;">
-                    <div class="card-panel"><h3>Goods Receipt Note</h3><div class="form-row"><div class="form-group"><label>Select PO</label><select id="grnPoSelect"></select></div><div class="form-group"><label>GRN Date</label><input type="date" id="grnDate"></div></div><button id="processGrnBtn" class="success">Process GRN & Generate Batch</button></div>
-                    <div class="card-panel"><h3>Batches</h3><table id="batchTable"><thead><tr><th>Batch No</th><th>Item</th><th>Qty</th><th>Remaining</th><th>Date</th></tr></thead><tbody id="batchTableBody"></tbody><td></div>
+                    <div class="card-panel">
+                        <h3>Goods Receipt Note</h3>
+                        <div class="form-row">
+                            <div class="form-group"><label>Select Approved PO</label><select id="grnPoSelect"></select></div>
+                            <div class="form-group"><label>GRN Date</label><input type="date" id="grnDate"></div>
+                        </div>
+                        <button id="processGrnBtn" class="success">Process GRN & Generate Batch</button>
+                    </div>
+                    <div class="card-panel">
+                        <h3>Batches</h3>
+                        <table id="batchTable"><thead><tr><th>Batch No</th><th>Item</th><th>Qty Received</th><th>Remaining</th><th>Date</th></tr></thead><tbody id="batchTableBody"></tbody></table>
+                    </div>
                 </div>
 
-                <!-- Stock -->
-                <div id="stock-mgmt" class="content-section" style="display:none;"><div class="card-panel"><h3>Stock Items</h3><table id="stockTable"><thead><tr><th>Item</th><th>Total Stock</th><th>Batches</th></tr></thead><tbody id="stockTableBody"></tbody><td></div></div>
+                <!-- STOCK MANAGEMENT -->
+                <div id="stock-mgmt" class="content-section" style="display:none;">
+                    <div class="card-panel">
+                        <h3>Stock Items & Batch Tracking</h3>
+                        <table id="stockTable"><thead><tr><th>Item Name</th><th>SKU</th><th>Total Stock</th><th>Batches</th><th>Actions</th></tr></thead><tbody id="stockTableBody"></tbody></table>
+                    </div>
+                </div>
 
-                <!-- Issue -->
+                <!-- ISSUE ITEMS -->
                 <div id="issue-panel" class="content-section" style="display:none;">
-                    <div class="card-panel"><h3>Issue Items</h3><div class="form-row"><div class="form-group"><label>Item</label><select id="issueItemSelect"></select></div><div class="form-group"><label>Batch</label><select id="issueBatchSelect"></select></div><div class="form-group"><label>Qty</label><input type="number" id="issueQty" value="1"></div><div class="form-group"><label>Issued To</label><input id="issuedTo"></div></div><button id="issueBtn" class="primary">Issue</button><hr><h4>History</h4><table id="issueLogTable"><thead><tr><th>Batch</th><th>Item</th><th>Qty</th><th>To</th><th>Date</th></tr></thead><tbody id="issueLogBody"></tbody></table></div>
+                    <div class="card-panel">
+                        <h3>Issue Items (Batch Wise)</h3>
+                        <div class="form-row">
+                            <div class="form-group"><label>Select Item</label><select id="issueItemSelect"></select></div>
+                            <div class="form-group"><label>Select Batch</label><select id="issueBatchSelect"></select></div>
+                            <div class="form-group"><label>Quantity</label><input type="number" id="issueQty" value="1"></div>
+                            <div class="form-group"><label>Issued To</label><input id="issuedTo" placeholder="Department/Staff"></div>
+                        </div>
+                        <button id="issueBtn" class="primary">Issue Item</button>
+                        <hr>
+                        <h4>Issue History</h4>
+                        <table id="issueLogTable"><thead><tr><th>Batch No</th><th>Item</th><th>Qty</th><th>Issued To</th><th>Date</th></tr></thead><tbody id="issueLogBody"></tbody></table>
+                    </div>
                 </div>
 
-                <!-- Supplier -->
-                <div id="supplier-master" class="content-section" style="display:none;"><div class="card-panel"><h3>Supplier Registration</h3><div class="form-row"><div class="form-group"><label>Company</label><input id="supCompany"></div><div class="form-group"><label>Address</label><input id="supAddress"></div><div class="form-group"><label>Phone</label><input id="supPhone"></div><div class="form-group"><label>Email</label><input id="supEmail"></div></div><button id="addSupplierBtn" class="primary">Register</button><hr><table id="supplierTable"><thead><tr><th>Company</th><th>Address</th><th>Phone</th><th>Email</th></tr></thead><tbody id="supplierTableBody"></tbody></table></div></div>
+                <!-- SUPPLIER REGISTRATION -->
+                <div id="supplier-master" class="content-section" style="display:none;">
+                    <div class="card-panel">
+                        <h3>Supplier Registration</h3>
+                        <div class="form-row">
+                            <div class="form-group"><label>Company Name</label><input id="supCompany" placeholder="ABC Pvt Ltd"></div>
+                            <div class="form-group"><label>Company Address</label><input id="supAddress" placeholder="Colombo, Sri Lanka"></div>
+                            <div class="form-group"><label>Phone Number</label><input id="supPhone" placeholder="+94 11 1234567"></div>
+                            <div class="form-group"><label>Email</label><input id="supEmail" placeholder="info@abc.com"></div>
+                        </div>
+                        <button id="addSupplierBtn" class="primary">Register Supplier</button>
+                        <hr>
+                        <h4>Supplier List</h4>
+                        <table id="supplierTable"><thead><tr><th>Company</th><th>Address</th><th>Phone</th><th>Email</th><th>Actions</th></tr></thead><tbody id="supplierTableBody"></tbody></table>
+                    </div>
+                </div>
 
-                <!-- Item + Upload -->
+                <!-- ITEM MASTER + CSV UPLOAD -->
                 <div id="item-master" class="content-section" style="display:none;">
-                    <div class="card-panel"><h3>Item Master</h3><div class="form-row"><div class="form-group"><label>Name</label><input id="newItemName"></div><div class="form-group"><label>SKU</label><input id="newItemSku"></div><div class="form-group"><label>Price</label><input type="number" id="newItemPrice"></div></div><button id="createItemBtn" class="primary">Create Item</button><hr><h3><i class="fas fa-upload"></i> Bulk Upload Items</h3><div class="form-row"><div class="form-group"><input type="file" id="uploadFile" accept=".csv"></div><button id="uploadBtn" class="primary">Upload & Process</button><button id="downloadSampleBtn" class="warning"><i class="fas fa-download"></i> Download Sample CSV</button></div><div id="uploadPreview" style="margin-top:12px;"></div></div>
+                    <div class="card-panel">
+                        <h3>Item Master</h3>
+                        <div class="form-row">
+                            <div class="form-group"><label>Item Name</label><input id="newItemName" placeholder="e.g., Gaming Laptop"></div>
+                            <div class="form-group"><label>SKU Code</label><input id="newItemSku" placeholder="SKU-001"></div>
+                            <div class="form-group"><label>Unit Price (LKR)</label><input type="number" id="newItemPrice" placeholder="450000"></div>
+                        </div>
+                        <button id="createItemBtn" class="primary">Create Item</button>
+                        <hr>
+                        <h3><i class="fas fa-upload"></i> Bulk Upload Items (CSV)</h3>
+                        <div class="form-row">
+                            <div class="form-group"><input type="file" id="uploadFile" accept=".csv"></div>
+                            <button id="uploadBtn" class="primary">Upload & Process</button>
+                            <button id="downloadSampleBtn" class="warning"><i class="fas fa-download"></i> Download Sample CSV</button>
+                        </div>
+                        <div id="uploadPreview" style="margin-top:12px; padding:10px; background:#f0fdf4; border-radius:12px; display:none;"></div>
+                        <hr>
+                        <h4>Existing Items</h4>
+                        <table id="itemsListTable"><thead><tr><th>Item Name</th><th>SKU</th><th>Price</th><th>Actions</th></tr></thead><tbody id="itemsListBody"></tbody></table>
+                    </div>
                 </div>
 
-                <!-- User Management -->
-                <div id="user-mgmt" class="content-section" style="display:none;"><div class="card-panel"><h3>User Management</h3><div class="form-row"><div class="form-group"><label>Username</label><input id="newUsername"></div><div class="form-group"><label>Password</label><input type="password" id="newPassword"></div><div class="form-group"><label>Role</label><select id="userRole"><option value="admin">Admin</option><option value="manager">Manager</option><option value="user">User</option></select></div></div><button id="addUserBtn" class="primary">Add User</button><hr><table id="userTable"><thead><tr><th>Username</th><th>Role</th></tr></thead><tbody id="userTableBody"></tbody></table></div></div>
+                <!-- USER MANAGEMENT -->
+                <div id="user-mgmt" class="content-section" style="display:none;">
+                    <div class="card-panel">
+                        <h3>User Management</h3>
+                        <div class="form-row">
+                            <div class="form-group"><label>Username</label><input id="newUsername" placeholder="Username"></div>
+                            <div class="form-group"><label>Password</label><input type="password" id="newPassword" placeholder="Password"></div>
+                            <div class="form-group"><label>Role</label><select id="userRole"><option value="admin">Admin</option><option value="manager">Manager</option><option value="user">User</option></select></div>
+                        </div>
+                        <button id="addUserBtn" class="primary">Add User</button>
+                        <hr>
+                        <h4>System Users</h4>
+                        <table id="userTable"><thead><tr><th>Username</th><th>Role</th><th>Actions</th></tr></thead><tbody id="userTableBody"></tbody></table>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
     <div id="notificationToast" class="notification-toast"><i class="fas fa-bell"></i> <span id="toastMsg"></span></div>
 
     <script>
-        // Data Models
-        let items = [{ id: "i1", name: "Gaming Laptop", sku: "LAP-01", lastPrice: 450000 }, { id: "i2", name: "Wireless Mouse", sku: "M-01", lastPrice: 2500 }];
-        let suppliers = [{ id: "s1", company: "TechGlobal Solutions", address: "Colombo 03", phone: "+94 112345678", email: "tech@global.com" }];
+        // ============ DATA MODELS ============
+        let items = [];
+        let suppliers = [];
         let purchaseOrders = [];
         let batches = [];
         let issueLogs = [];
-        let users = [
-            { id: "u1", username: "admin", password: "admin123", role: "admin" },
-            { id: "u2", username: "manager", password: "123", role: "manager" },
-            { id: "u3", username: "user", password: "123", role: "user" }
-        ];
+        let users = [];
         let currentUser = null;
         let notifications = [];
         let stockChart = null;
+
+        // ============ INITIAL DATA ============
+        function initializeData() {
+            items = [
+                { id: "i1", name: "Gaming Laptop", sku: "LAP-001", lastPrice: 450000 },
+                { id: "i2", name: "Wireless Mouse", sku: "M-001", lastPrice: 2500 },
+                { id: "i3", name: "Mechanical Keyboard", sku: "KB-001", lastPrice: 12500 }
+            ];
+            
+            suppliers = [
+                { id: "s1", company: "TechGlobal Solutions", address: "Colombo 03, Sri Lanka", phone: "+94 112345678", email: "tech@global.com" },
+                { id: "s2", company: "Office Plus Ltd", address: "Kandy, Sri Lanka", phone: "+94 812345678", email: "office@plus.lk" }
+            ];
+            
+            purchaseOrders = [
+                { id: "po1", poNumber: "PO-1001", itemId: "i1", qty: 5, unitPrice: 450000, totalValue: 2250000, supplierId: "s1", status: "approved", date: "2026-05-01", requestedBy: "admin" },
+                { id: "po2", poNumber: "PO-1002", itemId: "i2", qty: 20, unitPrice: 2500, totalValue: 50000, supplierId: "s2", status: "pending", date: "2026-05-02", requestedBy: "user" }
+            ];
+            
+            batches = [
+                { id: "b1", batchNo: "BATCH-2026001", itemId: "i1", poId: "po1", qtyReceived: 5, remainingQty: 3, grnDate: "2026-05-01" }
+            ];
+            
+            issueLogs = [
+                { id: "il1", batchNo: "BATCH-2026001", itemId: "i1", itemName: "Gaming Laptop", qty: 2, issuedTo: "IT Department", date: "2026-05-03" }
+            ];
+            
+            users = [
+                { id: "u1", username: "admin", password: "admin123", role: "admin" },
+                { id: "u2", username: "manager", password: "123", role: "manager" },
+                { id: "u3", username: "user", password: "123", role: "user" }
+            ];
+            
+            notifications = [
+                { id: "n1", msg: "Welcome to Smart Inventory System", date: "2026-05-01" },
+                { id: "n2", msg: "PO-1002 is pending your approval", date: "2026-05-02" }
+            ];
+            
+            saveAll();
+        }
 
         function saveAll() {
             localStorage.setItem('smart_inv_items', JSON.stringify(items));
@@ -487,28 +550,35 @@
         }
 
         function loadData() {
-            items = JSON.parse(localStorage.getItem('smart_inv_items') || JSON.stringify(items));
-            suppliers = JSON.parse(localStorage.getItem('smart_inv_suppliers') || JSON.stringify(suppliers));
-            purchaseOrders = JSON.parse(localStorage.getItem('smart_inv_pos') || `[{"id":"po1","poNumber":"PO-1001","itemId":"i1","qty":5,"unitPrice":450000,"totalValue":2250000,"supplierId":"s1","status":"pending","date":"2026-05-01"}]`);
-            batches = JSON.parse(localStorage.getItem('smart_inv_batches') || '[]');
-            issueLogs = JSON.parse(localStorage.getItem('smart_inv_issues') || '[]');
-            users = JSON.parse(localStorage.getItem('smart_inv_users') || JSON.stringify(users));
-            notifications = JSON.parse(localStorage.getItem('smart_inv_notifications') || '[{"id":"n1","msg":"Welcome to Smart Inventory System","date":"2026-05-01"}]');
-            saveAll();
+            const storedItems = localStorage.getItem('smart_inv_items');
+            if (storedItems) {
+                items = JSON.parse(storedItems);
+                suppliers = JSON.parse(localStorage.getItem('smart_inv_suppliers') || '[]');
+                purchaseOrders = JSON.parse(localStorage.getItem('smart_inv_pos') || '[]');
+                batches = JSON.parse(localStorage.getItem('smart_inv_batches') || '[]');
+                issueLogs = JSON.parse(localStorage.getItem('smart_inv_issues') || '[]');
+                users = JSON.parse(localStorage.getItem('smart_inv_users') || '[]');
+                notifications = JSON.parse(localStorage.getItem('smart_inv_notifications') || '[]');
+            } else {
+                initializeData();
+            }
         }
 
-        function formatLKR(amt) { return new Intl.NumberFormat('en-LK', { style: 'currency', currency: 'LKR' }).format(amt); }
-        
+        function formatLKR(amt) { 
+            return new Intl.NumberFormat('en-LK', { style: 'currency', currency: 'LKR' }).format(amt); 
+        }
+
         function showNotification(msg) { 
             notifications.unshift({ id: Date.now(), msg, date: new Date().toLocaleString() }); 
             saveAll(); 
+            const toast = document.getElementById('notificationToast');
             document.getElementById('toastMsg').innerText = msg; 
-            let toast = document.getElementById('notificationToast'); 
             toast.style.display = 'flex'; 
             setTimeout(() => toast.style.display = 'none', 3000); 
             refreshUI(); 
         }
 
+        // ============ RENDER FUNCTIONS ============
         function refreshUI() {
             if (!currentUser) return;
             renderDashboard();
@@ -519,8 +589,9 @@
             renderIssueSelectors();
             renderIssueLog();
             renderSupplierTable();
+            renderItemsList();
             renderUserTable();
-            populateItemDropdowns();
+            populateDropdowns();
             renderNotifications();
         }
 
@@ -532,7 +603,8 @@
                 <div class="stat-card"><i class="fas fa-boxes"></i><div class="stat-number">${totalStock}</div><div>Total Stock</div></div>
                 <div class="stat-card"><i class="fas fa-file-invoice"></i><div class="stat-number">${formatLKR(totalPOValue)}</div><div>PO Value</div></div>
                 <div class="stat-card"><i class="fas fa-clock"></i><div class="stat-number">${pendingApprovals}</div><div>Pending Approval</div></div>
-                <div class="stat-card"><i class="fas fa-sign-out-alt"></i><div class="stat-number">${issueLogs.length}</div><div>Issues</div></div>`;
+                <div class="stat-card"><i class="fas fa-sign-out-alt"></i><div class="stat-number">${issueLogs.length}</div><div>Total Issues</div></div>`;
+            
             if (stockChart) stockChart.destroy();
             let ctx = document.getElementById('stockChart').getContext('2d');
             stockChart = new Chart(ctx, { type: 'bar', data: { labels: items.map(i => i.name), datasets: [{ label: 'Stock Value (LKR)', data: items.map(i => (batches.filter(b => b.itemId === i.id).reduce((s, b) => s + b.remainingQty, 0) * i.lastPrice) || 0), backgroundColor: '#3b82f6' }] } });
@@ -546,7 +618,7 @@
             let filtered = purchaseOrders.filter(p => {
                 if (fromDate && p.date < fromDate) return false;
                 if (toDate && p.date > toDate) return false;
-                if (statusFilter !== 'all' && p.status !== statusFilter) return false;
+                if (statusFilter && statusFilter !== 'all' && p.status !== statusFilter) return false;
                 return true;
             });
             tbody.innerHTML = '';
@@ -559,15 +631,15 @@
                 row.insertCell(2).innerText = po.qty;
                 row.insertCell(3).innerText = formatLKR(po.totalValue);
                 row.insertCell(4).innerText = sup?.company || 'N/A';
-                let statusClass = po.status === 'pending' ? 'badge-pending' : (po.status === 'approved' ? 'badge-approved' : (po.status === 'rejected' ? 'badge-rejected' : 'badge-approved'));
+                let statusClass = po.status === 'pending' ? 'badge-pending' : (po.status === 'approved' ? 'badge-approved' : 'badge-rejected');
                 row.insertCell(5).innerHTML = `<span class="badge ${statusClass}">${po.status}</span>`;
                 row.insertCell(6).innerText = po.date || '-';
                 let actions = row.insertCell(7);
                 if (po.status === 'pending' && currentUser?.role === 'manager') {
                     let approveBtn = document.createElement('button'); approveBtn.className = 'small success'; approveBtn.innerHTML = 'Approve'; 
-                    approveBtn.onclick = () => { po.status = 'approved'; saveAll(); showNotification(`✅ PO ${po.poNumber} Approved by ${currentUser.username}`); refreshUI(); };
+                    approveBtn.onclick = () => { po.status = 'approved'; saveAll(); showNotification(`✅ PO ${po.poNumber} Approved`); refreshUI(); };
                     let rejectBtn = document.createElement('button'); rejectBtn.className = 'small danger'; rejectBtn.innerHTML = 'Reject'; 
-                    rejectBtn.onclick = () => { po.status = 'rejected'; saveAll(); showNotification(`❌ PO ${po.poNumber} REJECTED by ${currentUser.username}`); refreshUI(); };
+                    rejectBtn.onclick = () => { po.status = 'rejected'; saveAll(); showNotification(`❌ PO ${po.poNumber} Rejected`); refreshUI(); };
                     actions.append(approveBtn, rejectBtn);
                 } else if (po.status === 'approved') actions.innerHTML = '<i class="fas fa-check-circle"></i> Ready for GRN';
                 else if (po.status === 'rejected') actions.innerHTML = '<i class="fas fa-times-circle"></i> Rejected';
@@ -580,23 +652,23 @@
             let qty = parseInt(document.getElementById('poQty').value);
             let price = parseFloat(document.getElementById('itemUnitPrice').value);
             let supId = document.getElementById('poSupplierSelect').value;
-            if (!poNum || !itemId || qty <= 0) { alert("Complete all fields"); return; }
+            if (!poNum || !itemId || qty <= 0 || price <= 0) { alert("Complete all fields"); return; }
             purchaseOrders.push({ id: 'po' + Date.now(), poNumber: poNum, itemId, qty, unitPrice: price, totalValue: qty * price, supplierId: supId, status: 'pending', date: new Date().toISOString().split('T')[0], requestedBy: currentUser.username });
             saveAll(); refreshUI();
-            showNotification(`📄 PO ${poNum} created and waiting for Manager approval`);
+            showNotification(`📄 PO ${poNum} created. Waiting for Manager approval`);
             document.getElementById('poNumber').value = 'PO-' + Math.floor(Math.random() * 9000 + 1000);
         }
 
         function processGRN() {
             let poId = document.getElementById('grnPoSelect').value;
-            if (!poId || poId.includes('disabled')) { alert("Select PO"); return; }
+            if (!poId || poId.includes('disabled')) { alert("Select an approved PO"); return; }
             let po = purchaseOrders.find(p => p.id === poId);
             if (!po || po.status !== 'approved') return;
             let batchNo = 'BATCH-' + new Date().getFullYear() + String(Math.floor(Math.random() * 10000)).padStart(4, '0');
             batches.push({ id: 'b' + Date.now(), batchNo, itemId: po.itemId, poId: po.id, qtyReceived: po.qty, remainingQty: po.qty, grnDate: document.getElementById('grnDate').value || new Date().toISOString().split('T')[0] });
             po.status = 'received';
             saveAll(); refreshUI();
-            showNotification(`🎉 GRN Complete! Batch ${batchNo} created for ${items.find(i => i.id === po.itemId)?.name}`);
+            showNotification(`🎉 GRN Complete! Batch ${batchNo} created`);
         }
 
         function issueItem() {
@@ -613,60 +685,280 @@
             showNotification(`📤 Issued ${qty} from ${batch.batchNo} to ${issuedTo}`);
         }
 
-        function downloadSampleCSV() { let csv = "Item Name,SKU,Price (LKR)\nGaming Laptop,LP-01,450000\nWireless Mouse,MS-01,2500\nMechanical Keyboard,KB-01,12500"; let blob = new Blob([csv], { type: "text/csv" }); let a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = "sample_items.csv"; a.click(); }
-        
+        function addSupplier() {
+            let company = document.getElementById('supCompany').value.trim();
+            let address = document.getElementById('supAddress').value.trim();
+            let phone = document.getElementById('supPhone').value.trim();
+            let email = document.getElementById('supEmail').value.trim();
+            if (!company) { alert("Company name required"); return; }
+            suppliers.push({ id: 's' + Date.now(), company, address, phone, email });
+            saveAll(); refreshUI();
+            showNotification(`🏢 Supplier ${company} registered`);
+            document.getElementById('supCompany').value = '';
+            document.getElementById('supAddress').value = '';
+            document.getElementById('supPhone').value = '';
+            document.getElementById('supEmail').value = '';
+        }
+
+        function createItem() {
+            let name = document.getElementById('newItemName').value.trim();
+            let sku = document.getElementById('newItemSku').value.trim();
+            let price = parseFloat(document.getElementById('newItemPrice').value);
+            if (!name || !sku) { alert("Item name and SKU required"); return; }
+            if (items.some(i => i.sku === sku)) { alert("SKU already exists"); return; }
+            items.push({ id: 'i' + Date.now(), name, sku, lastPrice: isNaN(price) ? 0 : price });
+            saveAll(); refreshUI();
+            showNotification(`📦 Item ${name} created`);
+            document.getElementById('newItemName').value = '';
+            document.getElementById('newItemSku').value = '';
+            document.getElementById('newItemPrice').value = '';
+        }
+
+        function addUser() {
+            let username = document.getElementById('newUsername').value.trim();
+            let password = document.getElementById('newPassword').value.trim();
+            let role = document.getElementById('userRole').value;
+            if (!username || !password) { alert("Username and password required"); return; }
+            if (users.some(u => u.username === username)) { alert("Username exists"); return; }
+            users.push({ id: 'u' + Date.now(), username, password, role });
+            saveAll(); refreshUI();
+            showNotification(`👤 User ${username} created`);
+            document.getElementById('newUsername').value = '';
+            document.getElementById('newPassword').value = '';
+        }
+
+        function deleteUser(userId, username) {
+            if (username === 'admin') { alert("Cannot delete admin user"); return; }
+            users = users.filter(u => u.id !== userId);
+            saveAll(); refreshUI();
+            showNotification(`User deleted`);
+        }
+
+        function deleteSupplier(supplierId) {
+            suppliers = suppliers.filter(s => s.id !== supplierId);
+            saveAll(); refreshUI();
+            showNotification(`Supplier deleted`);
+        }
+
+        function deleteItem(itemId) {
+            items = items.filter(i => i.id !== itemId);
+            saveAll(); refreshUI();
+            showNotification(`Item deleted`);
+        }
+
+        function downloadSampleCSV() { 
+            let csv = "Item Name,SKU,Price (LKR)\nGaming Laptop,LP-01,450000\nWireless Mouse,MS-01,2500\nMechanical Keyboard,KB-01,12500"; 
+            let blob = new Blob([csv], { type: "text/csv" }); 
+            let a = document.createElement('a'); 
+            a.href = URL.createObjectURL(blob); 
+            a.download = "sample_items.csv"; 
+            a.click(); 
+        }
+
         function handleFileUpload() {
             let file = document.getElementById('uploadFile').files[0];
-            if (!file) { alert("Select file"); return; }
+            if (!file) { alert("Select a CSV file"); return; }
             let reader = new FileReader();
             reader.onload = function(e) {
                 let text = e.target.result;
                 let lines = text.split('\n');
+                let added = 0;
                 for (let i = 1; i < lines.length; i++) {
                     let vals = lines[i].split(',');
                     if (vals.length >= 2 && vals[0].trim()) {
                         let name = vals[0].trim();
                         let sku = vals[1].trim();
                         let price = parseFloat(vals[2]) || 0;
-                        if (name && sku && !items.some(i => i.sku === sku)) items.push({ id: 'i' + Date.now() + Math.random(), name, sku, lastPrice: price });
+                        if (name && sku && !items.some(i => i.sku === sku)) {
+                            items.push({ id: 'i' + Date.now() + Math.random(), name, sku, lastPrice: price });
+                            added++;
+                        }
                     }
                 }
-                saveAll(); refreshUI(); document.getElementById('uploadPreview').innerHTML = `<span style="color:green;">✅ Uploaded! ${items.length} total items.</span>`;
+                saveAll(); refreshUI();
+                let preview = document.getElementById('uploadPreview');
+                preview.style.display = 'block';
+                preview.innerHTML = `✅ Upload complete! ${added} new items added. Total items: ${items.length}`;
+                setTimeout(() => preview.style.display = 'none', 3000);
+                showNotification(`📤 Uploaded ${added} items`);
             };
             reader.readAsText(file);
         }
 
-        function populateItemDropdowns() {
-            let poSel = document.getElementById('poItemSelect'); if (poSel) poSel.innerHTML = items.map(i => `<option value="${i.id}" data-price="${i.lastPrice}">${i.name} - ${formatLKR(i.lastPrice)}</option>`).join('');
-            let supSel = document.getElementById('poSupplierSelect'); if (supSel) supSel.innerHTML = suppliers.map(s => `<option value="${s.id}">${s.company}</option>`).join('');
-            document.getElementById('poItemSelect')?.addEventListener('change', () => { let p = document.getElementById('poItemSelect').selectedOptions[0]?.getAttribute('data-price'); if (p) document.getElementById('itemUnitPrice').value = p; });
+        // ============ RENDER HELPER FUNCTIONS ============
+        function populateDropdowns() {
+            let poItemSel = document.getElementById('poItemSelect');
+            if (poItemSel) {
+                poItemSel.innerHTML = items.map(i => `<option value="${i.id}" data-price="${i.lastPrice}">${i.name} - ${formatLKR(i.lastPrice)}</option>`).join('');
+                poItemSel.onchange = () => {
+                    let opt = poItemSel.selectedOptions[0];
+                    let price = opt?.getAttribute('data-price') || 0;
+                    document.getElementById('itemUnitPrice').value = price;
+                };
+                if (poItemSel.options.length) poItemSel.onchange();
+            }
+            let supSel = document.getElementById('poSupplierSelect');
+            if (supSel) supSel.innerHTML = suppliers.map(s => `<option value="${s.id}">${s.company}</option>`).join('');
         }
 
-        function renderGRNSelectors() { let sel = document.getElementById('grnPoSelect'); if (sel) { let approved = purchaseOrders.filter(p => p.status === 'approved' && !batches.some(b => b.poId === p.id)); sel.innerHTML = approved.map(p => `<option value="${p.id}">${p.poNumber} - ${items.find(i => i.id === p.itemId)?.name} (${p.qty})</option>`).join(''); if (approved.length === 0) sel.innerHTML = '<option disabled>No pending GRN</option>'; } document.getElementById('grnDate').value = new Date().toISOString().split('T')[0]; }
-        function renderBatchTable() { let tbody = document.getElementById('batchTableBody'); if (tbody) { tbody.innerHTML = ''; batches.forEach(b => { let it = items.find(i => i.id === b.itemId); tbody.insertRow().innerHTML = `<td><strong>${b.batchNo}</strong></td><td>${it?.name}</td><td>${b.qtyReceived}</td><td>${b.remainingQty}</td><td>${b.grnDate}</td>`; }); } }
-        function renderStockTable() { let tbody = document.getElementById('stockTableBody'); if (tbody) { tbody.innerHTML = ''; items.forEach(it => { let itemBatches = batches.filter(b => b.itemId === it.id); let total = itemBatches.reduce((s, b) => s + b.remainingQty, 0); tbody.insertRow().innerHTML = `<td>${it.name}</td><td><strong>${total}</strong></td><td>${itemBatches.map(b => `${b.batchNo}:${b.remainingQty}`).join(', ')}</td>`; }); } }
-        function renderIssueSelectors() { let itemSel = document.getElementById('issueItemSelect'); if (itemSel) { itemSel.innerHTML = items.map(i => `<option value="${i.id}">${i.name}</option>`).join(''); itemSel.onchange = () => updateBatchDropdown(); updateBatchDropdown(); } }
-        function updateBatchDropdown() { let itemId = document.getElementById('issueItemSelect')?.value; let batchSel = document.getElementById('issueBatchSelect'); if (batchSel && itemId) { let available = batches.filter(b => b.itemId === itemId && b.remainingQty > 0); batchSel.innerHTML = available.map(b => `<option value="${b.id}">${b.batchNo} (${b.remainingQty})</option>`).join(''); if (available.length === 0) batchSel.innerHTML = '<option disabled>No batches</option>'; } }
-        function renderIssueLog() { let tbody = document.getElementById('issueLogBody'); if (tbody) { tbody.innerHTML = ''; issueLogs.slice().reverse().forEach(l => { tbody.insertRow().innerHTML = `<td>${l.batchNo}</td><td>${l.itemName}</td><td>${l.qty}</td><td>${l.issuedTo}</td><td>${l.date}</td>`; }); } }
-        function renderSupplierTable() { let tbody = document.getElementById('supplierTableBody'); if (tbody) { tbody.innerHTML = ''; suppliers.forEach(s => { tbody.insertRow().innerHTML = `<td>${s.company}</td><td>${s.address}</td><td>${s.phone}</td><td>${s.email}</td>`; }); } }
-        function addSupplier() { let comp = document.getElementById('supCompany').value.trim(); if (!comp) return; suppliers.push({ id: 's' + Date.now(), company: comp, address: document.getElementById('supAddress').value, phone: document.getElementById('supPhone').value, email: document.getElementById('supEmail').value }); saveAll(); refreshUI(); showNotification(`🏢 Supplier ${comp} registered`); }
-        function renderUserTable() { let tbody = document.getElementById('userTableBody'); if (tbody) { tbody.innerHTML = ''; users.forEach(u => { tbody.insertRow().innerHTML = `<td>${u.username}</td><td>${u.role}</td>`; }); } }
-        function addUser() { let uname = document.getElementById('newUsername').value.trim(); let pwd = document.getElementById('newPassword').value.trim(); let role = document.getElementById('userRole').value; if (!uname || !pwd) return; users.push({ id: 'u' + Date.now(), username: uname, password: pwd, role }); saveAll(); refreshUI(); showNotification(`👤 User ${uname} created`); }
-        function renderNotifications() { let div = document.getElementById('notificationList'); if (div) div.innerHTML = notifications.slice(0, 5).map(n => `<div style="padding:8px; border-bottom:1px solid #e2e8f0;"><i class="fas fa-bell"></i> ${n.msg} <small style="color:#64748b;">${n.date}</small></div>`).join(''); }
-        function printPOList() { let printWindow = window.open('', '_blank'); printWindow.document.write(`<html><head><title>PO Report</title><style>body{font-family:Poppins;padding:20mm;}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:8px;}</style></head><body><h2>Purchase Orders Report</h2>${document.getElementById('poTable').outerHTML}</body></html>`); printWindow.document.close(); printWindow.print(); }
+        function renderGRNSelectors() { 
+            let sel = document.getElementById('grnPoSelect'); 
+            if (sel) { 
+                let approved = purchaseOrders.filter(p => p.status === 'approved' && !batches.some(b => b.poId === p.id)); 
+                sel.innerHTML = approved.map(p => `<option value="${p.id}">${p.poNumber} - ${items.find(i => i.id === p.itemId)?.name} (${p.qty})</option>`).join(''); 
+                if (approved.length === 0) sel.innerHTML = '<option disabled>No pending GRN</option>'; 
+            } 
+            document.getElementById('grnDate').value = new Date().toISOString().split('T')[0]; 
+        }
 
+        function renderBatchTable() { 
+            let tbody = document.getElementById('batchTableBody'); 
+            if (tbody) { 
+                tbody.innerHTML = ''; 
+                batches.forEach(b => { 
+                    let it = items.find(i => i.id === b.itemId); 
+                    let row = tbody.insertRow();
+                    row.insertCell(0).innerHTML = `<strong>${b.batchNo}</strong>`;
+                    row.insertCell(1).innerText = it?.name || 'N/A';
+                    row.insertCell(2).innerText = b.qtyReceived;
+                    row.insertCell(3).innerText = b.remainingQty;
+                    row.insertCell(4).innerText = b.grnDate;
+                }); 
+            } 
+        }
+
+        function renderStockTable() { 
+            let tbody = document.getElementById('stockTableBody'); 
+            if (tbody) { 
+                tbody.innerHTML = ''; 
+                items.forEach(it => { 
+                    let itemBatches = batches.filter(b => b.itemId === it.id); 
+                    let total = itemBatches.reduce((s, b) => s + b.remainingQty, 0); 
+                    let row = tbody.insertRow();
+                    row.insertCell(0).innerText = it.name;
+                    row.insertCell(1).innerText = it.sku;
+                    row.insertCell(2).innerHTML = `<strong>${total}</strong>`;
+                    row.insertCell(3).innerHTML = itemBatches.map(b => `${b.batchNo}: ${b.remainingQty}`).join(', ') || 'No batches';
+                    let viewBtn = document.createElement('button'); 
+                    viewBtn.className = 'small'; 
+                    viewBtn.innerHTML = 'View Batches'; 
+                    viewBtn.onclick = () => alert(itemBatches.map(b => `${b.batchNo}: ${b.remainingQty} units`).join('\n') || 'No batches');
+                    row.insertCell(4).appendChild(viewBtn);
+                }); 
+            } 
+        }
+
+        function renderIssueSelectors() { 
+            let itemSel = document.getElementById('issueItemSelect'); 
+            if (itemSel) { 
+                let itemsWithStock = items.filter(i => batches.some(b => b.itemId === i.id && b.remainingQty > 0));
+                itemSel.innerHTML = itemsWithStock.map(i => `<option value="${i.id}">${i.name}</option>`).join('');
+                if (itemsWithStock.length === 0) itemSel.innerHTML = '<option disabled>No items with stock</option>';
+                itemSel.onchange = () => updateBatchDropdown(); 
+                updateBatchDropdown(); 
+            } 
+        }
+
+        function updateBatchDropdown() { 
+            let itemId = document.getElementById('issueItemSelect')?.value; 
+            let batchSel = document.getElementById('issueBatchSelect'); 
+            if (batchSel && itemId) { 
+                let available = batches.filter(b => b.itemId === itemId && b.remainingQty > 0); 
+                batchSel.innerHTML = available.map(b => `<option value="${b.id}">${b.batchNo} (${b.remainingQty} available)</option>`).join(''); 
+                if (available.length === 0) batchSel.innerHTML = '<option disabled>No batches available</option>'; 
+            } 
+        }
+
+        function renderIssueLog() { 
+            let tbody = document.getElementById('issueLogBody'); 
+            if (tbody) { 
+                tbody.innerHTML = ''; 
+                issueLogs.slice().reverse().forEach(l => { 
+                    let row = tbody.insertRow();
+                    row.insertCell(0).innerText = l.batchNo;
+                    row.insertCell(1).innerText = l.itemName || 'N/A';
+                    row.insertCell(2).innerText = l.qty;
+                    row.insertCell(3).innerText = l.issuedTo;
+                    row.insertCell(4).innerText = l.date;
+                }); 
+            } 
+        }
+
+        function renderSupplierTable() { 
+            let tbody = document.getElementById('supplierTableBody'); 
+            if (tbody) { 
+                tbody.innerHTML = ''; 
+                suppliers.forEach(s => { 
+                    let row = tbody.insertRow();
+                    row.insertCell(0).innerText = s.company;
+                    row.insertCell(1).innerText = s.address || '-';
+                    row.insertCell(2).innerText = s.phone || '-';
+                    row.insertCell(3).innerText = s.email || '-';
+                    let delBtn = document.createElement('button'); 
+                    delBtn.className = 'small danger'; 
+                    delBtn.innerHTML = 'Delete'; 
+                    delBtn.onclick = () => deleteSupplier(s.id);
+                    row.insertCell(4).appendChild(delBtn);
+                }); 
+            } 
+        }
+
+        function renderItemsList() { 
+            let tbody = document.getElementById('itemsListBody'); 
+            if (tbody) { 
+                tbody.innerHTML = ''; 
+                items.forEach(it => { 
+                    let row = tbody.insertRow();
+                    row.insertCell(0).innerText = it.name;
+                    row.insertCell(1).innerText = it.sku;
+                    row.insertCell(2).innerText = formatLKR(it.lastPrice);
+                    let delBtn = document.createElement('button'); 
+                    delBtn.className = 'small danger'; 
+                    delBtn.innerHTML = 'Delete'; 
+                    delBtn.onclick = () => deleteItem(it.id);
+                    row.insertCell(3).appendChild(delBtn);
+                }); 
+            } 
+        }
+
+        function renderUserTable() { 
+            let tbody = document.getElementById('userTableBody'); 
+            if (tbody) { 
+                tbody.innerHTML = ''; 
+                users.forEach(u => { 
+                    let row = tbody.insertRow();
+                    row.insertCell(0).innerText = u.username;
+                    row.insertCell(1).innerHTML = `<span class="badge">${u.role}</span>`;
+                    let delBtn = document.createElement('button'); 
+                    delBtn.className = 'small danger'; 
+                    delBtn.innerHTML = 'Delete'; 
+                    delBtn.onclick = () => deleteUser(u.id, u.username);
+                    if (u.username !== 'admin') row.insertCell(2).appendChild(delBtn);
+                    else row.insertCell(2).innerHTML = '<i>System Admin</i>';
+                }); 
+            } 
+        }
+
+        function renderNotifications() { 
+            let div = document.getElementById('notificationList'); 
+            if (div) div.innerHTML = notifications.slice(0, 5).map(n => `<div style="padding:8px; border-bottom:1px solid #e2e8f0;"><i class="fas fa-bell"></i> ${n.msg} <small style="color:#64748b;">${n.date}</small></div>`).join(''); 
+        }
+
+        function printPOList() { 
+            let printWindow = window.open('', '_blank'); 
+            printWindow.document.write(`<html><head><title>PO Report</title><style>body{font-family:Poppins;padding:20mm;}table{border-collapse:collapse;width:100%}th,td{border:1px solid #ccc;padding:8px;}</style></head><body><h2>Purchase Orders Report</h2>${document.getElementById('poTable').outerHTML}</body></html>`); 
+            printWindow.document.close(); 
+            printWindow.print(); 
+        }
+
+        // ============ AUTHENTICATION ============
         function initAuth() {
-            const loginForm = document.getElementById('loginForm');
-            const submitBtn = document.getElementById('submitBtn');
-            
-            loginForm.addEventListener('submit', function (e) {
+            document.getElementById('loginForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 const username = document.getElementById('loginUsername').value;
                 const password = document.getElementById('loginPassword').value;
-                
+                const submitBtn = document.querySelector('#loginForm .login-btn');
                 submitBtn.innerText = 'Verifying...';
-                submitBtn.disabled = true;
-                
                 setTimeout(() => {
                     let found = users.find(u => u.username === username && u.password === password);
                     if (found) {
@@ -680,10 +972,8 @@
                         document.getElementById('loginErrorMsg').innerText = 'Invalid username or password';
                     }
                     submitBtn.innerText = 'Sign In';
-                    submitBtn.disabled = false;
-                }, 800);
+                }, 500);
             });
-            
             document.getElementById('logoutBtn').onclick = () => { 
                 document.getElementById('loginPage').style.display = 'flex'; 
                 document.getElementById('appContainer').style.display = 'none'; 
@@ -704,7 +994,7 @@
             document.getElementById('processGrnBtn')?.addEventListener('click', processGRN);
             document.getElementById('issueBtn')?.addEventListener('click', issueItem);
             document.getElementById('addSupplierBtn')?.addEventListener('click', addSupplier);
-            document.getElementById('createItemBtn')?.addEventListener('click', () => { let n = document.getElementById('newItemName').value; if (n) items.push({ id: 'i' + Date.now(), name: n, sku: document.getElementById('newItemSku').value, lastPrice: parseFloat(document.getElementById('newItemPrice').value) || 0 }); saveAll(); refreshUI(); });
+            document.getElementById('createItemBtn')?.addEventListener('click', createItem);
             document.getElementById('addUserBtn')?.addEventListener('click', addUser);
             document.getElementById('applyPoFilter')?.addEventListener('click', () => renderPoTable());
             document.getElementById('printPoListBtn')?.addEventListener('click', printPOList);
