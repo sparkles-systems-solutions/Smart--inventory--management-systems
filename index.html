@@ -243,6 +243,11 @@
             border: 1.5px solid #e2e8f0;
         }
 
+        input[readonly] {
+            background: #f1f5f9;
+            cursor: not-allowed;
+        }
+
         button {
             background: #1e293b;
             color: white;
@@ -270,6 +275,9 @@
         .badge-pending { background: #fef3c7; color: #92400e; }
         .badge-approved { background: #d1fae5; color: #065f46; }
         .badge-rejected { background: #fee2e2; color: #991b1b; }
+        .badge-inventory { background: #dbeafe; color: #1e40af; }
+        .badge-service { background: #f3e8ff; color: #6b21a5; }
+        .badge-asset { background: #fed7aa; color: #9a3412; }
 
         table {
             width: 100%;
@@ -306,6 +314,14 @@
             display: none;
             align-items: center;
             gap: 10px;
+        }
+
+        .generated-number {
+            background: #e2e8f0;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.85rem;
         }
     </style>
 </head>
@@ -365,9 +381,12 @@
                     <div class="card-panel">
                         <h3>Create Purchase Order</h3>
                         <div class="form-row">
-                            <div class="form-group"><label>PO Number</label><input id="poNumber" placeholder="PO-2026-001"></div>
+                            <div class="form-group">
+                                <label>PO Number (Auto Generated)</label>
+                                <input type="text" id="poNumberDisplay" readonly style="background:#f1f5f9; font-weight:bold;">
+                            </div>
                             <div class="form-group"><label>Item</label><select id="poItemSelect"></select></div>
-                            <div class="form-group"><label>Unit Price</label><input type="number" id="itemUnitPrice"></div>
+                            <div class="form-group"><label>Unit Price (LKR)</label><input type="number" id="itemUnitPrice"></div>
                             <div class="form-group"><label>Quantity</label><input type="number" id="poQty" value="1"></div>
                             <div class="form-group"><label>Supplier</label><select id="poSupplierSelect"></select></div>
                         </div>
@@ -397,7 +416,7 @@
                     </div>
                     <div class="card-panel">
                         <h3>Batches</h3>
-                        <table id="batchTable"><thead><tr><th>Batch No</th><th>Item</th><th>Qty Received</th><th>Remaining</th><th>Date</th></tr></thead><tbody id="batchTableBody"></tbody></table>
+                        <table id="batchTable"><thead><tr><th>GRN/Batch No</th><th>Item</th><th>Qty Received</th><th>Remaining</th><th>Date</th></tr></thead><tbody id="batchTableBody"></tbody></table>
                     </div>
                 </div>
 
@@ -405,7 +424,7 @@
                 <div id="stock-mgmt" class="content-section" style="display:none;">
                     <div class="card-panel">
                         <h3>Stock Items & Batch Tracking</h3>
-                        <table id="stockTable"><thead><tr><th>Item Name</th><th>SKU</th><th>Total Stock</th><th>Batches</th><th>Actions</th></tr></thead><tbody id="stockTableBody"></tbody></table>
+                        <table id="stockTable"><thead><tr><th>Item Code</th><th>Item Name</th><th>SKU</th><th>Total Stock</th><th>Batches</th><th>Actions</th></tr></thead><tbody id="stockTableBody"></tbody></table>
                     </div>
                 </div>
 
@@ -422,7 +441,7 @@
                         <button id="issueBtn" class="primary">Issue Item</button>
                         <hr>
                         <h4>Issue History</h4>
-                        <table id="issueLogTable"><thead><tr><th>Batch No</th><th>Item</th><th>Qty</th><th>Issued To</th><th>Date</th></tr></thead><tbody id="issueLogBody"></tbody></table>
+                        <table id="issueLogTable"><thead><tr><th>Issue No</th><th>Batch No</th><th>Item</th><th>Qty</th><th>Issued To</th><th>Date</th></tr></thead><tbody id="issueLogBody"></tbody><tr>
                     </div>
                 </div>
 
@@ -431,6 +450,7 @@
                     <div class="card-panel">
                         <h3>Supplier Registration</h3>
                         <div class="form-row">
+                            <div class="form-group"><label>Supplier Code (Auto)</label><input type="text" id="supplierCodeDisplay" readonly style="background:#f1f5f9;"></div>
                             <div class="form-group"><label>Company Name</label><input id="supCompany" placeholder="ABC Pvt Ltd"></div>
                             <div class="form-group"><label>Company Address</label><input id="supAddress" placeholder="Colombo, Sri Lanka"></div>
                             <div class="form-group"><label>Phone Number</label><input id="supPhone" placeholder="+94 11 1234567"></div>
@@ -439,7 +459,7 @@
                         <button id="addSupplierBtn" class="primary">Register Supplier</button>
                         <hr>
                         <h4>Supplier List</h4>
-                        <table id="supplierTable"><thead><tr><th>Company</th><th>Address</th><th>Phone</th><th>Email</th><th>Actions</th></tr></thead><tbody id="supplierTableBody"></tbody></table>
+                        <table id="supplierTable"><thead><tr><th>Supplier Code</th><th>Company</th><th>Address</th><th>Phone</th><th>Email</th><th>Actions</th></tr></thead><tbody id="supplierTableBody"></tbody></table>
                     </div>
                 </div>
 
@@ -448,8 +468,16 @@
                     <div class="card-panel">
                         <h3>Item Master</h3>
                         <div class="form-row">
+                            <div class="form-group"><label>Item Code (Auto)</label><input type="text" id="itemCodeDisplay" readonly style="background:#f1f5f9;"></div>
                             <div class="form-group"><label>Item Name</label><input id="newItemName" placeholder="e.g., Gaming Laptop"></div>
                             <div class="form-group"><label>SKU Code</label><input id="newItemSku" placeholder="SKU-001"></div>
+                            <div class="form-group"><label>Item Type</label>
+                                <select id="itemTypeSelect">
+                                    <option value="Inventory">Inventory (IN) - Stock Item</option>
+                                    <option value="Service">Service (SE) - Non-stock</option>
+                                    <option value="Asset">Asset (AS) - Fixed Asset</option>
+                                </select>
+                            </div>
                             <div class="form-group"><label>Unit Price (LKR)</label><input type="number" id="newItemPrice" placeholder="450000"></div>
                         </div>
                         <button id="createItemBtn" class="primary">Create Item</button>
@@ -463,7 +491,7 @@
                         <div id="uploadPreview" style="margin-top:12px; padding:10px; background:#f0fdf4; border-radius:12px; display:none;"></div>
                         <hr>
                         <h4>Existing Items</h4>
-                        <table id="itemsListTable"><thead><tr><th>Item Name</th><th>SKU</th><th>Price</th><th>Actions</th></tr></thead><tbody id="itemsListBody"></tbody></table>
+                        <table id="itemsListTable"><thead><tr><th>Item Code</th><th>Item Name</th><th>SKU</th><th>Type</th><th>Price</th><th>Actions</th></tr></thead><tbody id="itemsListBody"></tbody></table>
                     </div>
                 </div>
 
@@ -499,30 +527,146 @@
         let notifications = [];
         let stockChart = null;
 
+        // ============ AUTO NUMBER GENERATION FUNCTIONS ============
+
+        function getFinancialYearStart() {
+            let today = new Date();
+            let year = today.getFullYear();
+            let currentYearShort = year.toString().slice(-2);
+            let month = today.getMonth();
+            
+            if (month < 3) {
+                year = year - 1;
+                currentYearShort = year.toString().slice(-2);
+            }
+            return { year: year, yearShort: currentYearShort };
+        }
+
+        function getCurrentMonthName() {
+            const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+            let today = new Date();
+            return months[today.getMonth()];
+        }
+
+        function isNewFinancialYear() {
+            let today = new Date();
+            let currentYear = getFinancialYearStart().year;
+            let lastResetYear = localStorage.getItem('financial_year_reset');
+            let currentYearStr = currentYear.toString();
+            
+            if (lastResetYear !== currentYearStr) {
+                localStorage.setItem('financial_year_reset', currentYearStr);
+                localStorage.setItem('po_counter', '0');
+                localStorage.setItem('grn_counter', '0');
+                localStorage.setItem('issue_counter', '0');
+                localStorage.setItem('supplier_counter', '0');
+                localStorage.setItem('inventory_item_counter', '0');
+                localStorage.setItem('service_item_counter', '0');
+                localStorage.setItem('asset_item_counter', '0');
+                return true;
+            }
+            return false;
+        }
+
+        function generatePONumber() {
+            isNewFinancialYear();
+            let { yearShort } = getFinancialYearStart();
+            let month = getCurrentMonthName();
+            let counter = parseInt(localStorage.getItem('po_counter') || '0') + 1;
+            let paddedCounter = String(counter).padStart(7, '0');
+            localStorage.setItem('po_counter', counter);
+            return `${yearShort}${month}-PO${paddedCounter}`;
+        }
+
+        function generateGRNNumber() {
+            isNewFinancialYear();
+            let { yearShort } = getFinancialYearStart();
+            let month = getCurrentMonthName();
+            let counter = parseInt(localStorage.getItem('grn_counter') || '0') + 1;
+            let paddedCounter = String(counter).padStart(7, '0');
+            localStorage.setItem('grn_counter', counter);
+            return `${yearShort}${month}-GN${paddedCounter}`;
+        }
+
+        function generateIssueNumber() {
+            isNewFinancialYear();
+            let { yearShort } = getFinancialYearStart();
+            let month = getCurrentMonthName();
+            let counter = parseInt(localStorage.getItem('issue_counter') || '0') + 1;
+            let paddedCounter = String(counter).padStart(7, '0');
+            localStorage.setItem('issue_counter', counter);
+            return `${yearShort}${month}-IS${paddedCounter}`;
+        }
+
+        function generateSupplierNumber() {
+            let counter = parseInt(localStorage.getItem('supplier_counter') || '0') + 1;
+            let paddedCounter = String(counter).padStart(7, '0');
+            localStorage.setItem('supplier_counter', counter);
+            return `VR${paddedCounter}`;
+        }
+
+        function generateItemNumber(itemType) {
+            let prefix = '';
+            let counterKey = '';
+            
+            switch(itemType) {
+                case 'Inventory':
+                    prefix = 'IN';
+                    counterKey = 'inventory_item_counter';
+                    break;
+                case 'Service':
+                    prefix = 'SE';
+                    counterKey = 'service_item_counter';
+                    break;
+                case 'Asset':
+                    prefix = 'AS';
+                    counterKey = 'asset_item_counter';
+                    break;
+                default:
+                    prefix = 'IT';
+                    counterKey = 'item_counter';
+            }
+            
+            let counter = parseInt(localStorage.getItem(counterKey) || '0') + 1;
+            let paddedCounter = String(counter).padStart(7, '0');
+            localStorage.setItem(counterKey, counter);
+            return `${prefix}${paddedCounter}`;
+        }
+
+        function updateDisplayNumbers() {
+            let poDisplay = document.getElementById('poNumberDisplay');
+            if (poDisplay) poDisplay.value = generatePONumber();
+            
+            let supplierDisplay = document.getElementById('supplierCodeDisplay');
+            if (supplierDisplay) supplierDisplay.value = generateSupplierNumber();
+            
+            let itemCodeDisplay = document.getElementById('itemCodeDisplay');
+            let selectedType = document.getElementById('itemTypeSelect')?.value || 'Inventory';
+            if (itemCodeDisplay) itemCodeDisplay.value = generateItemNumber(selectedType);
+        }
+
         // ============ INITIAL DATA ============
         function initializeData() {
             items = [
-                { id: "i1", name: "Gaming Laptop", sku: "LAP-001", lastPrice: 450000 },
-                { id: "i2", name: "Wireless Mouse", sku: "M-001", lastPrice: 2500 },
-                { id: "i3", name: "Mechanical Keyboard", sku: "KB-001", lastPrice: 12500 }
+                { id: "IN0000001", itemNumber: "IN0000001", name: "Gaming Laptop", sku: "LAP-001", type: "Inventory", lastPrice: 450000 },
+                { id: "IN0000002", itemNumber: "IN0000002", name: "Wireless Mouse", sku: "M-001", type: "Inventory", lastPrice: 2500 },
+                { id: "SE0000001", itemNumber: "SE0000001", name: "IT Support Service", sku: "SVC-001", type: "Service", lastPrice: 25000 }
             ];
             
             suppliers = [
-                { id: "s1", company: "TechGlobal Solutions", address: "Colombo 03, Sri Lanka", phone: "+94 112345678", email: "tech@global.com" },
-                { id: "s2", company: "Office Plus Ltd", address: "Kandy, Sri Lanka", phone: "+94 812345678", email: "office@plus.lk" }
+                { id: "VR0000001", supplierNumber: "VR0000001", company: "TechGlobal Solutions", address: "Colombo 03, Sri Lanka", phone: "+94 112345678", email: "tech@global.com" }
             ];
             
             purchaseOrders = [
-                { id: "po1", poNumber: "PO-1001", itemId: "i1", qty: 5, unitPrice: 450000, totalValue: 2250000, supplierId: "s1", status: "approved", date: "2026-05-01", requestedBy: "admin" },
-                { id: "po2", poNumber: "PO-1002", itemId: "i2", qty: 20, unitPrice: 2500, totalValue: 50000, supplierId: "s2", status: "pending", date: "2026-05-02", requestedBy: "user" }
+                { id: "po1", poNumber: "26MAY-PO0000001", itemId: "IN0000001", qty: 5, unitPrice: 450000, totalValue: 2250000, supplierId: "VR0000001", status: "approved", date: "2026-05-01", requestedBy: "admin" }
             ];
             
             batches = [
-                { id: "b1", batchNo: "BATCH-2026001", itemId: "i1", poId: "po1", qtyReceived: 5, remainingQty: 3, grnDate: "2026-05-01" }
+                { id: "b1", batchNo: "26MAY-GN0000001", grnNumber: "26MAY-GN0000001", itemId: "IN0000001", poId: "po1", qtyReceived: 5, remainingQty: 3, grnDate: "2026-05-01" }
             ];
             
             issueLogs = [
-                { id: "il1", batchNo: "BATCH-2026001", itemId: "i1", itemName: "Gaming Laptop", qty: 2, issuedTo: "IT Department", date: "2026-05-03" }
+                { id: "il1", issueNumber: "26MAY-IS0000001", batchNo: "26MAY-GN0000001", itemId: "IN0000001", itemName: "Gaming Laptop", qty: 2, issuedTo: "IT Department", date: "2026-05-03" }
             ];
             
             users = [
@@ -532,8 +676,7 @@
             ];
             
             notifications = [
-                { id: "n1", msg: "Welcome to Smart Inventory System", date: "2026-05-01" },
-                { id: "n2", msg: "PO-1002 is pending your approval", date: "2026-05-02" }
+                { id: "n1", msg: "Welcome to Smart Inventory System", date: "2026-05-01" }
             ];
             
             saveAll();
@@ -593,6 +736,7 @@
             renderUserTable();
             populateDropdowns();
             renderNotifications();
+            updateDisplayNumbers();
         }
 
         function renderDashboard() {
@@ -647,16 +791,16 @@
         }
 
         function createPO() {
-            let poNum = document.getElementById('poNumber').value.trim();
+            let poNum = generatePONumber();
             let itemId = document.getElementById('poItemSelect').value;
             let qty = parseInt(document.getElementById('poQty').value);
             let price = parseFloat(document.getElementById('itemUnitPrice').value);
             let supId = document.getElementById('poSupplierSelect').value;
-            if (!poNum || !itemId || qty <= 0 || price <= 0) { alert("Complete all fields"); return; }
+            if (!itemId || qty <= 0 || price <= 0) { alert("Complete all fields"); return; }
             purchaseOrders.push({ id: 'po' + Date.now(), poNumber: poNum, itemId, qty, unitPrice: price, totalValue: qty * price, supplierId: supId, status: 'pending', date: new Date().toISOString().split('T')[0], requestedBy: currentUser.username });
             saveAll(); refreshUI();
             showNotification(`📄 PO ${poNum} created. Waiting for Manager approval`);
-            document.getElementById('poNumber').value = 'PO-' + Math.floor(Math.random() * 9000 + 1000);
+            updateDisplayNumbers();
         }
 
         function processGRN() {
@@ -664,11 +808,12 @@
             if (!poId || poId.includes('disabled')) { alert("Select an approved PO"); return; }
             let po = purchaseOrders.find(p => p.id === poId);
             if (!po || po.status !== 'approved') return;
-            let batchNo = 'BATCH-' + new Date().getFullYear() + String(Math.floor(Math.random() * 10000)).padStart(4, '0');
-            batches.push({ id: 'b' + Date.now(), batchNo, itemId: po.itemId, poId: po.id, qtyReceived: po.qty, remainingQty: po.qty, grnDate: document.getElementById('grnDate').value || new Date().toISOString().split('T')[0] });
+            let grnNumber = generateGRNNumber();
+            let batchNo = grnNumber;
+            batches.push({ id: 'b' + Date.now(), batchNo, grnNumber: grnNumber, itemId: po.itemId, poId: po.id, qtyReceived: po.qty, remainingQty: po.qty, grnDate: document.getElementById('grnDate').value || new Date().toISOString().split('T')[0] });
             po.status = 'received';
             saveAll(); refreshUI();
-            showNotification(`🎉 GRN Complete! Batch ${batchNo} created`);
+            showNotification(`🎉 GRN Complete! GRN: ${grnNumber}`);
         }
 
         function issueItem() {
@@ -680,9 +825,10 @@
             if (!batch || batch.remainingQty < qty) { alert(`Only ${batch?.remainingQty} available`); return; }
             batch.remainingQty -= qty;
             let item = items.find(i => i.id === batch.itemId);
-            issueLogs.push({ id: Date.now(), batchNo: batch.batchNo, itemId: batch.itemId, itemName: item?.name, qty, issuedTo, date: new Date().toLocaleString() });
+            let issueNumber = generateIssueNumber();
+            issueLogs.push({ id: Date.now(), issueNumber: issueNumber, batchNo: batch.batchNo, itemId: batch.itemId, itemName: item?.name, qty, issuedTo, date: new Date().toLocaleString() });
             saveAll(); refreshUI();
-            showNotification(`📤 Issued ${qty} from ${batch.batchNo} to ${issuedTo}`);
+            showNotification(`📤 Issue ${issueNumber}: ${qty} from ${batch.batchNo} to ${issuedTo}`);
         }
 
         function addSupplier() {
@@ -691,27 +837,32 @@
             let phone = document.getElementById('supPhone').value.trim();
             let email = document.getElementById('supEmail').value.trim();
             if (!company) { alert("Company name required"); return; }
-            suppliers.push({ id: 's' + Date.now(), company, address, phone, email });
+            let supNumber = generateSupplierNumber();
+            suppliers.push({ id: supNumber, supplierNumber: supNumber, company, address, phone, email });
             saveAll(); refreshUI();
-            showNotification(`🏢 Supplier ${company} registered`);
+            showNotification(`🏢 Supplier ${supNumber} - ${company} registered`);
             document.getElementById('supCompany').value = '';
             document.getElementById('supAddress').value = '';
             document.getElementById('supPhone').value = '';
             document.getElementById('supEmail').value = '';
+            updateDisplayNumbers();
         }
 
         function createItem() {
             let name = document.getElementById('newItemName').value.trim();
             let sku = document.getElementById('newItemSku').value.trim();
             let price = parseFloat(document.getElementById('newItemPrice').value);
+            let type = document.getElementById('itemTypeSelect').value;
             if (!name || !sku) { alert("Item name and SKU required"); return; }
             if (items.some(i => i.sku === sku)) { alert("SKU already exists"); return; }
-            items.push({ id: 'i' + Date.now(), name, sku, lastPrice: isNaN(price) ? 0 : price });
+            let itemNumber = generateItemNumber(type);
+            items.push({ id: itemNumber, itemNumber: itemNumber, name, sku, type: type, lastPrice: isNaN(price) ? 0 : price });
             saveAll(); refreshUI();
-            showNotification(`📦 Item ${name} created`);
+            showNotification(`📦 Item ${itemNumber} - ${name} created (${type})`);
             document.getElementById('newItemName').value = '';
             document.getElementById('newItemSku').value = '';
             document.getElementById('newItemPrice').value = '';
+            updateDisplayNumbers();
         }
 
         function addUser() {
@@ -747,7 +898,7 @@
         }
 
         function downloadSampleCSV() { 
-            let csv = "Item Name,SKU,Price (LKR)\nGaming Laptop,LP-01,450000\nWireless Mouse,MS-01,2500\nMechanical Keyboard,KB-01,12500"; 
+            let csv = "Item Name,SKU,Type,Price (LKR)\nGaming Laptop,LP-01,Inventory,450000\nIT Support,SVC-01,Service,25000\nOffice Desk,DSK-01,Asset,35000"; 
             let blob = new Blob([csv], { type: "text/csv" }); 
             let a = document.createElement('a'); 
             a.href = URL.createObjectURL(blob); 
@@ -765,12 +916,15 @@
                 let added = 0;
                 for (let i = 1; i < lines.length; i++) {
                     let vals = lines[i].split(',');
-                    if (vals.length >= 2 && vals[0].trim()) {
+                    if (vals.length >= 3 && vals[0].trim()) {
                         let name = vals[0].trim();
                         let sku = vals[1].trim();
-                        let price = parseFloat(vals[2]) || 0;
+                        let type = vals[2].trim();
+                        let price = parseFloat(vals[3]) || 0;
                         if (name && sku && !items.some(i => i.sku === sku)) {
-                            items.push({ id: 'i' + Date.now() + Math.random(), name, sku, lastPrice: price });
+                            let itemType = (type === 'Service' ? 'Service' : (type === 'Asset' ? 'Asset' : 'Inventory'));
+                            let itemNumber = generateItemNumber(itemType);
+                            items.push({ id: itemNumber, itemNumber: itemNumber, name, sku, type: itemType, lastPrice: price });
                             added++;
                         }
                     }
@@ -789,7 +943,7 @@
         function populateDropdowns() {
             let poItemSel = document.getElementById('poItemSelect');
             if (poItemSel) {
-                poItemSel.innerHTML = items.map(i => `<option value="${i.id}" data-price="${i.lastPrice}">${i.name} - ${formatLKR(i.lastPrice)}</option>`).join('');
+                poItemSel.innerHTML = items.map(i => `<option value="${i.id}" data-price="${i.lastPrice}">${i.name} (${i.itemNumber}) - ${formatLKR(i.lastPrice)}</option>`).join('');
                 poItemSel.onchange = () => {
                     let opt = poItemSel.selectedOptions[0];
                     let price = opt?.getAttribute('data-price') || 0;
@@ -798,7 +952,12 @@
                 if (poItemSel.options.length) poItemSel.onchange();
             }
             let supSel = document.getElementById('poSupplierSelect');
-            if (supSel) supSel.innerHTML = suppliers.map(s => `<option value="${s.id}">${s.company}</option>`).join('');
+            if (supSel) supSel.innerHTML = suppliers.map(s => `<option value="${s.id}">${s.company} (${s.supplierNumber})</option>`).join('');
+            
+            let typeSelect = document.getElementById('itemTypeSelect');
+            if (typeSelect) {
+                typeSelect.onchange = () => updateDisplayNumbers();
+            }
         }
 
         function renderGRNSelectors() { 
@@ -835,15 +994,16 @@
                     let itemBatches = batches.filter(b => b.itemId === it.id); 
                     let total = itemBatches.reduce((s, b) => s + b.remainingQty, 0); 
                     let row = tbody.insertRow();
-                    row.insertCell(0).innerText = it.name;
-                    row.insertCell(1).innerText = it.sku;
-                    row.insertCell(2).innerHTML = `<strong>${total}</strong>`;
-                    row.insertCell(3).innerHTML = itemBatches.map(b => `${b.batchNo}: ${b.remainingQty}`).join(', ') || 'No batches';
+                    row.insertCell(0).innerHTML = `<strong>${it.itemNumber || it.id}</strong>`;
+                    row.insertCell(1).innerText = it.name;
+                    row.insertCell(2).innerText = it.sku;
+                    row.insertCell(3).innerHTML = `<strong>${total}</strong>`;
+                    row.insertCell(4).innerHTML = itemBatches.map(b => `${b.batchNo}: ${b.remainingQty}`).join(', ') || 'No batches';
                     let viewBtn = document.createElement('button'); 
                     viewBtn.className = 'small'; 
                     viewBtn.innerHTML = 'View Batches'; 
                     viewBtn.onclick = () => alert(itemBatches.map(b => `${b.batchNo}: ${b.remainingQty} units`).join('\n') || 'No batches');
-                    row.insertCell(4).appendChild(viewBtn);
+                    row.insertCell(5).appendChild(viewBtn);
                 }); 
             } 
         }
@@ -852,7 +1012,7 @@
             let itemSel = document.getElementById('issueItemSelect'); 
             if (itemSel) { 
                 let itemsWithStock = items.filter(i => batches.some(b => b.itemId === i.id && b.remainingQty > 0));
-                itemSel.innerHTML = itemsWithStock.map(i => `<option value="${i.id}">${i.name}</option>`).join('');
+                itemSel.innerHTML = itemsWithStock.map(i => `<option value="${i.id}">${i.name} (${i.itemNumber})</option>`).join('');
                 if (itemsWithStock.length === 0) itemSel.innerHTML = '<option disabled>No items with stock</option>';
                 itemSel.onchange = () => updateBatchDropdown(); 
                 updateBatchDropdown(); 
@@ -875,11 +1035,12 @@
                 tbody.innerHTML = ''; 
                 issueLogs.slice().reverse().forEach(l => { 
                     let row = tbody.insertRow();
-                    row.insertCell(0).innerText = l.batchNo;
-                    row.insertCell(1).innerText = l.itemName || 'N/A';
-                    row.insertCell(2).innerText = l.qty;
-                    row.insertCell(3).innerText = l.issuedTo;
-                    row.insertCell(4).innerText = l.date;
+                    row.insertCell(0).innerHTML = `<strong>${l.issueNumber || '-'}</strong>`;
+                    row.insertCell(1).innerText = l.batchNo;
+                    row.insertCell(2).innerText = l.itemName || 'N/A';
+                    row.insertCell(3).innerText = l.qty;
+                    row.insertCell(4).innerText = l.issuedTo;
+                    row.insertCell(5).innerText = l.date;
                 }); 
             } 
         }
@@ -890,15 +1051,16 @@
                 tbody.innerHTML = ''; 
                 suppliers.forEach(s => { 
                     let row = tbody.insertRow();
-                    row.insertCell(0).innerText = s.company;
-                    row.insertCell(1).innerText = s.address || '-';
-                    row.insertCell(2).innerText = s.phone || '-';
-                    row.insertCell(3).innerText = s.email || '-';
+                    row.insertCell(0).innerHTML = `<strong>${s.supplierNumber || s.id}</strong>`;
+                    row.insertCell(1).innerText = s.company;
+                    row.insertCell(2).innerText = s.address || '-';
+                    row.insertCell(3).innerText = s.phone || '-';
+                    row.insertCell(4).innerText = s.email || '-';
                     let delBtn = document.createElement('button'); 
                     delBtn.className = 'small danger'; 
                     delBtn.innerHTML = 'Delete'; 
                     delBtn.onclick = () => deleteSupplier(s.id);
-                    row.insertCell(4).appendChild(delBtn);
+                    row.insertCell(5).appendChild(delBtn);
                 }); 
             } 
         }
@@ -909,14 +1071,17 @@
                 tbody.innerHTML = ''; 
                 items.forEach(it => { 
                     let row = tbody.insertRow();
-                    row.insertCell(0).innerText = it.name;
-                    row.insertCell(1).innerText = it.sku;
-                    row.insertCell(2).innerText = formatLKR(it.lastPrice);
+                    row.insertCell(0).innerHTML = `<strong>${it.itemNumber || it.id}</strong>`;
+                    row.insertCell(1).innerText = it.name;
+                    row.insertCell(2).innerText = it.sku;
+                    let typeClass = it.type === 'Inventory' ? 'badge-inventory' : (it.type === 'Service' ? 'badge-service' : 'badge-asset');
+                    row.insertCell(3).innerHTML = `<span class="badge ${typeClass}">${it.type || 'Inventory'}</span>`;
+                    row.insertCell(4).innerText = formatLKR(it.lastPrice);
                     let delBtn = document.createElement('button'); 
                     delBtn.className = 'small danger'; 
                     delBtn.innerHTML = 'Delete'; 
                     delBtn.onclick = () => deleteItem(it.id);
-                    row.insertCell(3).appendChild(delBtn);
+                    row.insertCell(5).appendChild(delBtn);
                 }); 
             } 
         }
@@ -1000,6 +1165,7 @@
             document.getElementById('printPoListBtn')?.addEventListener('click', printPOList);
             document.getElementById('uploadBtn')?.addEventListener('click', handleFileUpload);
             document.getElementById('downloadSampleBtn')?.addEventListener('click', downloadSampleCSV);
+            document.getElementById('itemTypeSelect')?.addEventListener('change', updateDisplayNumbers);
         }
 
         loadData();
